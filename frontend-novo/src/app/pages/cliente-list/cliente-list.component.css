@@ -1,0 +1,14 @@
+.page-container {
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+table {
+  width: 100%;
+}

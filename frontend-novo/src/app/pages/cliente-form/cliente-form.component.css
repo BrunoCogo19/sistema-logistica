@@ -1,0 +1,9 @@
+.form-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: auto;
+}
+
+.full-width {
+  width: 100%;
+}

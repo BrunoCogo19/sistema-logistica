@@ -1,0 +1,54 @@
+.sidenav-container {
+  height: 100%;
+}
+
+mat-sidenav {
+  width: 250px;
+  border-right: 1px solid rgba(0,0,0,.12);
+  background-color: #313E61;
+}
+
+::ng-deep mat-sidenav a.mat-mdc-list-item .mdc-list-item__primary-text {
+  color: white !important; 
+}
+/* Estilos para o cabeçalho dentro do Sidenav (logo no desktop) */
+.sidenav-header {
+  padding: 16px;
+  text-align: center; /* Centraliza o logo */
+}
+.sidenav-logo {
+  max-height: 100px; /* Ajuste conforme necessário */
+  cursor: pointer;
+}
+
+/* Estilos para o logo na Toolbar (mobile) */
+.toolbar-logo-mobile {
+   height: 50px; /* Um pouco menor para mobile */
+   margin-left: 16px;
+   cursor: pointer;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* Garante que o conteúdo principal tenha padding e não fique escondido */
+.main-content {
+  padding: 16px; 
+}
+
+/* Remove o padding padrão do Angular Material que pode conflitar */
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+mat-toolbar mat-icon {
+  color: rgb(243, 238, 238);
+}
+:host mat-toolbar {
+  /* Use o código da cor que você quiser */
+  background-color: #313E61; /* Exemplo: a mesma cor do seu menu lateral */
+  color: white; /* Garante que o texto e ícones fiquem brancos */
+}

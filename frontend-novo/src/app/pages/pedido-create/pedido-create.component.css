@@ -1,0 +1,28 @@
+.form-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.checkbox-margin {
+  margin: 16px 0;
+}
+.search-item {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+.item-name {
+  font-weight: 500; /* Deixa o nome em negrito leve */
+}
+
+.item-address {
+  font-size: 0.8em; /* Fonte menor para o endereço */
+  color: #555;     /* Cor mais suave */
+}

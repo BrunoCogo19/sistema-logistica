@@ -1,0 +1,37 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{ isEditMode ? 'Editar Cliente' : 'Novo Cliente' }}</h1>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="salvar()">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nome Completo</mat-label>
+          <input matInput name="nome" [(ngModel)]="cliente.nome" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Telefone</mat-label>
+          <input matInput name="telefone" [(ngModel)]="cliente.telefone">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Endereço</mat-label>
+          <input matInput name="endereco" [(ngModel)]="cliente.endereco" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Bairro / CEP</mat-label>
+          <input matInput name="bairro_cep" [(ngModel)]="cliente.bairro_cep" required>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="salvar()">Salvar</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

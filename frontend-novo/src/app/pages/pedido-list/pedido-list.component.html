@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="header">
+    <h1>Dashboard de Pedidos</h1>
+    <button mat-raised-button color="primary" routerLink="/pedidos/novo">Novo Pedido</button>
+  </div>
+
+  <mat-form-field appearance="fill" class="filter-field">
+    <mat-label>Filtrar por Status</mat-label>
+    <mat-select [(ngModel)]="statusFiltro" (selectionChange)="onFilterChange()">
+      <mat-option value="todos">Todos</mat-option>
+      <mat-option value="preparado">Preparado</mat-option>
+      <mat-option value="saiu">Saiu para Entrega</mat-option>
+      <mat-option value="entregue">Entregue</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="pedidos.length > 0; else noPedidos">
+
+    <div *ngIf="pedidos.length > 0; else noPedidos">
+
+      <div class="card-grid">
+
+        <mat-card *ngFor="let pedido of pedidos" class="order-card" [ngClass]="pedido.status_entrega">
+          <mat-card-content class="card-content">
+            <div class="info">
+              <p><strong>Criado em:</strong> {{ pedido.criado_em | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p><strong>Cliente:</strong> {{ pedido.nomeCliente }}</p>
+              <p><strong>Rua:</strong> {{ pedido.enderecoCliente?.rua }}</p>
+              <p><strong>Bairro:</strong> {{ pedido.enderecoCliente?.bairro }}</p>
+               <p><strong>Pagamento:</strong> {{ pedido.status_pagamento === 'na_entrega' ? 'Na Entrega' : 'Pago' }}</p>
+              <p><strong>Valor:</strong> {{ pedido.valor | currency:'BRL' }}</p>
+            </div>
+            <div class="actions">
+              <button mat-icon-button aria-label="Mais opções do pedido">
+                <mat-icon>add</mat-icon> </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+  </div>
+
+  <mat-paginator *ngIf="pedidos.length > 0" [length]="totalPedidos" [pageSize]="pageSize" [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 25]" (page)="onPageChange($event)" class="mat-elevation-z2">
+  </mat-paginator>
+
+  <ng-template #noPedidos>
+    <div class="empty-state">
+      <p>Nenhum pedido encontrado para o filtro selecionado.</p>
+    </div>
+  </ng-template>
+
+</div>

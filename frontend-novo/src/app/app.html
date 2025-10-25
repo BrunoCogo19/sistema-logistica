@@ -1,0 +1,36 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav #sidenav 
+               [mode]="sidenavMode" 
+               [opened]="sidenavOpened" 
+               position="start">
+
+    <div class="sidenav-header">
+       <img src="assets/logo.png" alt="Logo Super Kiko" class="sidenav-logo">
+    </div>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/pedidos" (click)="closeSidenavIfNeeded(sidenav)">Pedidos</a>
+      <a mat-list-item routerLink="/clientes" (click)="closeSidenavIfNeeded(sidenav)">Clientes</a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <mat-toolbar *ngIf="isHandset$ | async">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <a routerLink="/pedidos">
+         <img src="assets/logo.png" alt="Logo Super Kiko" class="toolbar-logo-mobile">
+       </a>
+      <span class="toolbar-spacer"></span> 
+    </mat-toolbar>
+
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
