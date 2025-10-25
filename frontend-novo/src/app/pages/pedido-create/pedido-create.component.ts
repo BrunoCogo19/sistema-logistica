@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../services/pedido.service';
 import { ClienteService } from '../../services/cliente.service';
-
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -48,7 +48,8 @@ export class PedidoCreateComponent {
   constructor(
     private pedidoService: PedidoService,
     private clienteService: ClienteService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   // 4. CRIE UMA FUNÇÃO PARA LIMPAR/RESETAR O FORMULÁRIO
@@ -106,5 +107,13 @@ export class PedidoCreateComponent {
         });
       },
     });
+  }
+goToEditClient(): void {
+    if (this.pedido.clienteId) {
+      this.router.navigate(['/clientes/editar', this.pedido.clienteId]);
+    }
+  }
+  goToCreateClient(): void {
+    this.router.navigate(['/clientes/novo']);
   }
 }

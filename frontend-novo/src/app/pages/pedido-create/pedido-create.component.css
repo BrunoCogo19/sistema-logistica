@@ -26,3 +26,36 @@
   font-size: 0.8em; /* Fonte menor para o endereço */
   color: #555;     /* Cor mais suave */
 }
+.selected-client-header {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  margin-bottom: 1rem; 
+}
+
+.selected-client-header p {
+  margin: 0; 
+}
+
+.search-item { /* Estilo para o item da lista de busca */
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-address {
+  font-size: 0.8em;
+  color: #555;
+}
+
+.no-results { /* Estilo para a linha "Nenhum resultado" */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

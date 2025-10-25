@@ -1,5 +1,5 @@
 .page-container {
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .header {
@@ -9,55 +9,52 @@
   margin-bottom: 1.5rem;
 }
 
-.order-card {
-  margin-bottom: 1rem;
-  border-radius: 12px !important; /* !important para sobrescrever o estilo padrão */
-}
-
-.card-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.info p {
+.header h1 {
   margin: 0;
-  line-height: 1.5;
+  font-size: 1.8rem;
 }
 
-/* Cores dos status (baseado no seu protótipo) */
-.order-card.preparado {
-  background-color: #c4d1f6; /* Amarelo */
-  color: black;
+.filter-toolbar {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem; /* Espaço entre busca e abas */
 }
 
-.order-card.saiu {
-  background-color: #e4f1b5; /* Azul */
-  color: black;
+.search-field {
+  width: 300px; /* Largura do campo de busca */
 }
 
-.order-card.entregue {
-  background-color: #bae7b6; /* Verde */
-  color: black;
+.status-tabs {
+  flex-grow: 1; /* Faz as abas ocuparem o espaço restante */
 }
 
-/* Adicionei uma cor para um status hipotético de 'cancelado' ou com problema */
-.order-card.cancelado {
-  background-color: #f4baba; /* Vermelho */
-  color: black;
+/* Remove a linha inferior padrão das abas */
+::ng-deep .mat-mdc-tab-nav-bar {
+  border-bottom: none !important;
 }
 
-/* Ajusta a cor do ícone nos cards coloridos */
-.order-card .mat-icon {
-  color: black;
-}
-.card-grid {
-  display: grid;
-  /* Cria colunas que têm no mínimo 400px de largura e se ajustam
-     automaticamente para preencher o espaço. Em telas menores,
-     os cards vão para a linha de baixo. */
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 16px; /* Define um espaçamento entre os cards */
+/* Estilo para a aba ativa */
+a.mat-mdc-tab-link.mdc-tab--active {
+   border-bottom: 2px solid var(--mdc-tab-indicator-active-indicator-color, blue);
 }
 
-/* O resto do seu CSS para .page-container, .order-card, etc. continua igual */
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  font-weight: bold;
+  background-color: #f9f9f9; /* Fundo mais suave para cabeçalho */
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: grey;
+}
