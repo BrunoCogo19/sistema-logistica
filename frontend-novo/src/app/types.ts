@@ -1,10 +1,11 @@
 // Define o formato de um objeto Cliente
 export interface Cliente {
-  id: string;
+  id?: string; // <-- Torna o ID opcional com "?"
   nome: string;
   telefone?: string;
   endereco: string;
   bairro_cep: string;
+  criado_em?: any; // <-- Adiciona criado_em como opcional
 }
 
 // Define o formato de um objeto Pedido

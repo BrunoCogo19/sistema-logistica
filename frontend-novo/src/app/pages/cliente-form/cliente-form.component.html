@@ -13,10 +13,13 @@
           <input matInput name="nome" [(ngModel)]="cliente.nome" required>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Telefone</mat-label>
-          <input matInput name="telefone" [(ngModel)]="cliente.telefone">
-        </mat-form-field>
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>Telefone</mat-label>
+  <input matInput 
+         name="telefone" 
+         [(ngModel)]="cliente.telefone"
+         (input)="formatPhone($event)"  
+         placeholder="(XX) XXXXX-XXXX"> </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Endereço</mat-label>
