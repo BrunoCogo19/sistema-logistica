@@ -3,6 +3,7 @@ import { db } from './config/firebase.js'; // Importa nossa instância do DB
 import { Query } from 'firebase-admin/firestore';
 import cors from 'cors'; // <-- 1. IMPORTE O PACOTE CORS
 
+
 type Cliente = {
   id: string;
   nome: string;
@@ -429,3 +430,6 @@ app.get('/api/clientes/:id', async (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Backend iniciado na porta ${PORT}`);
 });
+
+// Criação de QRcode
+

@@ -60,7 +60,9 @@
             <mat-option value="na_entrega">Pagar na Entrega</mat-option>
           </mat-select>
         </mat-form-field>
-        
+        <div *ngIf="qrcode" class= "QRcode">
+            <qrcode [qrdata] = "qrcode" [ariaSetSize]="250"></qrcode>
+          </div>
         <mat-checkbox name="tem_fardo" [(ngModel)]="pedido.tem_fardo" class="checkbox-margin">
           Pedido tem fardo?
         </mat-checkbox>

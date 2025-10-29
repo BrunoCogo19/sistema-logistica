@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../services/pedido.service';
@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list'; 
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Cliente, Pedido } from '../../types';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-pedido-create',
@@ -30,14 +31,16 @@ import { Cliente, Pedido } from '../../types';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatSnackBarModule
-  ],
+    MatSnackBarModule,
+    QRCodeComponent
+],
   templateUrl: './pedido-create.component.html',
-  styleUrl: './pedido-create.component.css'
+  styleUrls: ['./pedido-create.component.css']
 })
-export class PedidoCreateComponent {
+export class PedidoCreateComponent implements OnInit {
   // Objeto para guardar os dados do formulário
   pedido: any = this.criarObjetoPedidoVazio();
+  qrcode: string = '';
 
   termoBusca: string = '';
   clientesEncontrados: Cliente[] = [];
@@ -114,5 +117,16 @@ goToEditClient(): void {
   }
   goToCreateClient(): void {
     this.router.navigate(['/clientes/novo']);
+  }
+
+  //QRcode para cada pedido criado
+ 
+  ngOnInit(): void {
+    this.qrcode =
+      `VALOR DA COMPRA: ${this.pedido.valor}\n` +
+      `QUANTIDADE DE CAIXAS: ${this.pedido.quantidade_caixas}\n` +
+      `PAGAMENTO: ${this.pedido.status_pagamento}`;
+
+      console.log(this.qrcode)
   }
 }
