@@ -45,22 +45,25 @@
 
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Valor da Compra</mat-label>
-          <input matInput type="number" name="valor" [(ngModel)]="pedido.valor" required>
+          <input matInput type="number" name="valor" [(ngModel)]="dadosFomulario.valor" required>
         </mat-form-field>
         
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Quantidade de Caixas</mat-label>
-          <input matInput type="number" name="quantidade_caixas" [(ngModel)]="pedido.quantidade_caixas" required>
+          <input matInput type="number" name="quantidade_caixas" [(ngModel)]="dadosFomulario.caixa" required>
         </mat-form-field>
         
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Status do Pagamento</mat-label>
-          <mat-select name="status_pagamento" [(ngModel)]="pedido.status_pagamento">
+          <mat-select name="status_pagamento" [(ngModel)]="dadosFomulario.pagar">
             <mat-option value="pago">Pago</mat-option>
             <mat-option value="na_entrega">Pagar na Entrega</mat-option>
           </mat-select>
         </mat-form-field>
-        
+         <button type="submit">Gerar QRcode</button>
+        <div *ngIf="qrcode" class= "qr-output">
+            <qrcode [qrdata] = "qrcode" [ariaSetSize]="250"></qrcode>
+          </div>
         <mat-checkbox name="tem_fardo" [(ngModel)]="pedido.tem_fardo" class="checkbox-margin">
           Pedido tem fardo?
         </mat-checkbox>

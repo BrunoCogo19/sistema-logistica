@@ -15,14 +15,14 @@ import { MatFormFieldModule } from '@angular/material/form-field'; // Para o cam
 import { MatInputModule } from '@angular/material/input';     // Para o campo de busca
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // Para paginação
 
+
 @Component({
   selector: 'app-pedido-list',
   standalone: true,
   imports: [
     CommonModule, RouterModule, FormsModule, // FormsModule adicionado
     MatButtonModule, MatIconModule, MatTableModule, MatTabsModule,
-    MatFormFieldModule, MatInputModule, MatPaginatorModule
-  ],
+    MatFormFieldModule, MatInputModule, MatPaginatorModule,   ],
   templateUrl: './pedido-list.component.html',
   styleUrl: './pedido-list.component.css'
 })
@@ -119,4 +119,6 @@ statusList = [
     // A busca agora só filtra os dados já carregados na página atual
     this.aplicarFiltroNome();
   }
+
+ 
 }

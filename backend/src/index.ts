@@ -3,6 +3,7 @@ import { db } from './config/firebase.js'; // Importa nossa instância do DB
 import { Query } from 'firebase-admin/firestore';
 import cors from 'cors'; // <-- 1. IMPORTE O PACOTE CORS
 
+
 type Cliente = {
   id: string;
   nome: string;
@@ -465,3 +466,5 @@ app.post('/api/bairros', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Erro interno ao adicionar bairro.' });
   }
 });
+// Criação de QRcode
+
