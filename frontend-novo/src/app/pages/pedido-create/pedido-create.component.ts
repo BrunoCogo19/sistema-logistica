@@ -40,6 +40,11 @@ import { QRCodeComponent } from 'angularx-qrcode';
 export class PedidoCreateComponent implements OnInit {
   // Objeto para guardar os dados do formulário
   pedido: any = this.criarObjetoPedidoVazio();
+  dadosFomulario = {
+    valor: "",
+    caixa: "",
+    pagar: ""
+  }
   qrcode: string = '';
 
   termoBusca: string = '';
@@ -122,10 +127,14 @@ goToEditClient(): void {
   //QRcode para cada pedido criado
  
   ngOnInit(): void {
+    if(this.dadosFomulario.caixa && this.dadosFomulario.valor){
     this.qrcode =
-      `VALOR DA COMPRA: ${this.pedido.valor}\n` +
-      `QUANTIDADE DE CAIXAS: ${this.pedido.quantidade_caixas}\n` +
-      `PAGAMENTO: ${this.pedido.status_pagamento}`;
+      `VALOR DA COMPRA: ${this.dadosFomulario.valor}\n` +
+      `QUANTIDADE DE CAIXAS: ${this.dadosFomulario.caixa}\n` +
+      `PAGAMENTO: ${this.dadosFomulario.pagar}`;}
+      else{
+        this.qrcode = 'Erro: Preencher dados obrigatorios'
+      }
 
       console.log(this.qrcode)
   }
