@@ -5,10 +5,19 @@
   "projects": {
     "frontend-novo": {
       "projectType": "application",
-      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "css",
+          "type": "component",
+          "flat": false
+        },
+        "@schematics/angular:service": {
+          "type": "service"
+      }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",

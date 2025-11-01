@@ -26,9 +26,19 @@
           <input matInput name="endereco" [(ngModel)]="cliente.endereco" required>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Bairro / CEP</mat-label>
-          <input matInput name="bairro_cep" [(ngModel)]="cliente.bairro_cep" required>
+<mat-form-field appearance="fill" class="full-width">
+          <mat-label>Bairro</mat-label>
+          <input type="text"
+                 placeholder="Digite para buscar..."
+                 matInput 
+                 [formControl]="bairroControl" 
+                 [matAutocomplete]="autoBairro"
+                 required>
+          <mat-autocomplete #autoBairro="matAutocomplete">
+            <mat-option *ngFor="let bairro of bairrosFiltrados | async" [value]="bairro">
+              {{bairro}}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
       </form>
     </mat-card-content>

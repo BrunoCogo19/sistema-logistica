@@ -283,8 +283,8 @@ app.post('/api/clientes', async (req: Request, res: Response) => {
     const clienteData = req.body;
 
     // Validação básica dos dados recebidos
-    if (!clienteData.nome || !clienteData.endereco || !clienteData.bairro_cep) {
-      return res.status(400).json({ message: 'Nome, endereço e bairro/cep são obrigatórios.' });
+    if (!clienteData.nome || !clienteData.endereco || !clienteData.bairro) {
+      return res.status(400).json({ message: 'Nome, endereço e bairro são obrigatórios.' });
     }
 
     // Estrutura o objeto a ser salvo na coleção 'clientes'
@@ -292,7 +292,7 @@ app.post('/api/clientes', async (req: Request, res: Response) => {
       nome: clienteData.nome,
       telefone: clienteData.telefone || null, // Telefone é opcional
       endereco: clienteData.endereco,
-      bairro_cep: clienteData.bairro_cep,
+      bairro_cep: clienteData.bairro,
       criado_em: new Date(),
     };
 
@@ -428,4 +428,40 @@ app.get('/api/clientes/:id', async (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Backend iniciado na porta ${PORT}`);
+});
+
+app.get('/api/bairros', async (req: Request, res: Response) => {
+  try {
+    const snapshot = await db.collection('bairros').orderBy('nome').get(); // Ordena alfabeticamente
+    if (snapshot.empty) {
+      return res.status(200).json([]);
+    }
+    // Extrai apenas os nomes dos bairros
+    const nomesBairros = snapshot.docs.map(doc => doc.data().nome as string);
+    res.status(200).json(nomesBairros);
+  } catch (error) {
+    console.error("Erro ao buscar bairros:", error);
+    res.status(500).json({ message: 'Erro interno ao buscar bairros.' });
+  }
+});
+
+// ROTA PARA ADICIONAR UM NOVO BAIRRO (usaremos no futuro)
+app.post('/api/bairros', async (req: Request, res: Response) => {
+  try {
+    const { nome } = req.body;
+    if (!nome || typeof nome !== 'string') {
+      return res.status(400).json({ message: 'O nome do bairro é obrigatório e deve ser um texto.' });
+    }
+    // Verifica se o bairro já existe para evitar duplicados (case-insensitive)
+    const snapshot = await db.collection('bairros').where('nome', '==', nome).get();
+    if (!snapshot.empty) {
+        return res.status(409).json({ message: `O bairro '${nome}' já existe.` });
+    }
+
+    const docRef = await db.collection('bairros').add({ nome });
+    res.status(201).json({ message: 'Bairro adicionado com sucesso!', id: docRef.id, nome });
+  } catch (error) {
+    console.error("Erro ao adicionar bairro:", error);
+    res.status(500).json({ message: 'Erro interno ao adicionar bairro.' });
+  }
 });

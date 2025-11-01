@@ -4,7 +4,7 @@ export interface Cliente {
   nome: string;
   telefone?: string;
   endereco: string;
-  bairro_cep: string;
+  bairro: string;
   criado_em?: any; // <-- Adiciona criado_em como opcional
 }
 
