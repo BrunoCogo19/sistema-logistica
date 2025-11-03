@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/pedidos', pathMatch: 'full' },
   { path: 'pedidos', component: PedidoListComponent },
   { path: 'pedidos/novo', component: PedidoCreateComponent },
+  { path: 'pedidos/editar/:id', component: PedidoCreateComponent }, 
   
   // Rotas de Clientes
   { path: 'clientes', component: ClienteListComponent },
