@@ -8,7 +8,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import {QRCodeComponent} from 'angularx-qrcode'
 
 // Imports do CDK para responsividade
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -28,7 +27,6 @@ import { map, shareReplay } from 'rxjs/operators'; // Para manipular o Observabl
     MatIconModule,
     MatButtonModule,
     MatListModule,
-    QRCodeComponent
   ],
   templateUrl: './app.html', // Usando o nome correto do seu ficheiro de template
   styleUrl: './app.css'     // Usando o nome correto do seu ficheiro de estilo

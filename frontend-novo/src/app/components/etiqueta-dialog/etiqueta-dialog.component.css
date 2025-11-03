@@ -1,0 +1,25 @@
+.label-container {
+  border: 2px dashed black;
+  padding: 10px;
+  width: 450px; /* Largura ajustada */
+  font-family: 'Courier New', Courier, monospace;
+}
+.header { /* ... (estilos que já tínhamos) ... */ }
+.content { display: flex; justify-content: space-between; }
+.details p { margin: 4px 0; }
+.qr-code { display: flex; align-items: center; justify-content: center; }
+
+/* CSS para impressão: esconde tudo, menos a etiqueta */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #etiqueta-para-imprimir, #etiqueta-para-imprimir * {
+    visibility: visible;
+  }
+  #etiqueta-para-imprimir {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

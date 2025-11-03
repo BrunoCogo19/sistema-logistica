@@ -1,37 +1,33 @@
 <div class="form-container">
   <mat-card>
     <mat-card-header>
-      <mat-card-title><h1>Novo Pedido</h1></mat-card-title>
+      <mat-card-title>
+        <h1>Novo Pedido</h1>
+      </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
       <form (ngSubmit)="salvarPedido()">
 
+        <!-- CLIENTE -->
         <div class="selected-client-header">
           <p><strong>Cliente Selecionado:</strong> {{ termoBusca || 'Nenhum' }}</p>
-          <button mat-icon-button type="button" *ngIf="pedido.clienteId" 
-                  (click)="goToEditClient()" 
-                  color="primary"
-                  aria-label="Editar cliente selecionado">
+          <button mat-icon-button type="button" *ngIf="pedido.clienteId" (click)="goToEditClient()" color="primary">
             <mat-icon>edit</mat-icon>
           </button>
         </div>
-
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Buscar Cliente</mat-label>
-          <input matInput type="text" placeholder="Digite 3 ou mais letras..."
-                 [(ngModel)]="termoBusca" name="termoBusca" (input)="buscarCliente()">
+          <input matInput type="text" [(ngModel)]="termoBusca" name="termoBusca" (input)="buscarCliente()">
         </mat-form-field>
-
         <div class="search-results" *ngIf="buscaAtiva">
           <mat-list>
             <mat-list-item *ngFor="let cliente of clientesEncontrados" (click)="selecionarCliente(cliente)">
               <div class="search-item">
-                 <span class="item-name">{{ cliente.nome }}</span>
-                 <span class="item-address">{{ cliente.endereco }}</span>
+                <span class="item-name">{{ cliente.nome }}</span>
+                <span class="item-address">{{ cliente.endereco }}</span>
               </div>
             </mat-list-item>
-            
             <mat-list-item *ngIf="termoBusca.length >= 3 && clientesEncontrados.length === 0">
               <div class="no-results">
                 <span>Nenhum cliente encontrado.</span>
@@ -42,34 +38,33 @@
             </mat-list-item>
           </mat-list>
         </div>
-
+        <!-- DADOS DO PEDIDO -->
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Valor da Compra</mat-label>
-          <input matInput type="number" name="valor" [(ngModel)]="dadosFomulario.valor" required>
+          <input matInput type="number" name="valor" [(ngModel)]="pedido.valor" required>
         </mat-form-field>
-        
+
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Quantidade de Caixas</mat-label>
-          <input matInput type="number" name="quantidade_caixas" [(ngModel)]="dadosFomulario.caixa" required>
+          <input matInput type="number" name="quantidade_caixas" [(ngModel)]="pedido.quantidade_caixas" required>
         </mat-form-field>
-        
+
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Status do Pagamento</mat-label>
-          <mat-select name="status_pagamento" [(ngModel)]="dadosFomulario.pagar">
+          <!-- O mat-select abre... -->
+          <mat-select name="status_pagamento" [(ngModel)]="pedido.status_pagamento">
+            <!-- As opções vêm DENTRO dele... -->
             <mat-option value="pago">Pago</mat-option>
             <mat-option value="na_entrega">Pagar na Entrega</mat-option>
-          </mat-select>
+          </mat-select> <!-- ...o mat-select fecha... -->
         </mat-form-field>
-         <button type="submit">Gerar QRcode</button>
-        <div *ngIf="qrcode" class= "qr-output">
-            <qrcode [qrdata] = "qrcode" [ariaSetSize]="250"></qrcode>
-          </div>
+
         <mat-checkbox name="tem_fardo" [(ngModel)]="pedido.tem_fardo" class="checkbox-margin">
           Pedido tem fardo?
         </mat-checkbox>
       </form>
     </mat-card-content>
-    
+
     <mat-card-actions align="end">
       <button mat-raised-button color="primary" (click)="salvarPedido()">Salvar Pedido</button>
     </mat-card-actions>
