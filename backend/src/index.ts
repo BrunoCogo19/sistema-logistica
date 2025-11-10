@@ -1,34 +1,36 @@
 import express, { type Request, type Response } from 'express';
 import { db } from './config/firebase.js'; // Importa nossa instância do DB
 import { Query } from 'firebase-admin/firestore';
-import cors from 'cors'; // <-- 1. IMPORTE O PACOTE CORS
+import cors from 'cors';
 
-
+// --- TIPOS ---
 type Cliente = {
   id: string;
   nome: string;
-  telefone?: string; // O '?' indica que o campo é opcional
+  telefone?: string;
   endereco: string;
   bairro_cep: string;
-  criado_em: any; // Poderia ser um tipo mais específico, mas 'any' resolve por agora
+  criado_em: any;
 };
 
+// --- CONFIGURAÇÃO DO SERVIDOR ---
 const app = express();
 app.use(express.json());
 app.use(cors());
 const PORT = 3001;
 
+// --- ROTA RAÍZ ---
 app.get('/', (req: Request, res: Response) => {
   res.send('<h1>Backend do Sistema de Logística - Conectado ao Firestore!</h1>');
 });
 
+// --- ENDPOINTS DE PEDIDOS ---
+
 /**
- * Endpoint para criar um novo pedido.
- * Módulo 2: Preparação e Expedição (necessário para exibir a lista).
+ * Endpoint para BUSCAR pedidos (com paginação e filtros).
  */
 app.get('/api/pedidos', async (req: Request, res: Response) => {
   try {
-    // Parâmetros da URL
     const pagina = parseInt(req.query.pagina as string);
     const limite = parseInt(req.query.limite as string);
     const status = req.query.status_entrega as string;
@@ -37,28 +39,20 @@ app.get('/api/pedidos', async (req: Request, res: Response) => {
 
     const colecaoPedidos = db.collection('pedidos');
     
-    // --- Lógica Corrigida ---
-
-    // 1. Cria uma query base para o filtro
     let queryBase: Query = colecaoPedidos;
     if (status && status !== 'todos') {
       queryBase = queryBase.where('status_entrega', '==', status);
     }
 
-    // 2. Executa uma consulta separada APENAS para contar o total de resultados
     const totalSnapshot = await queryBase.get();
     const totalPedidos = totalSnapshot.size;
 
-    // 3. Agora, constrói a consulta final para buscar os DADOS,
-    //    adicionando ordenação e paginação à query base
     let dadosQuery: Query = queryBase.orderBy(ordenarPor, direcao);
     if (pagina && limite) {
       dadosQuery = dadosQuery.limit(limite).offset((pagina - 1) * limite);
     }
 
-    // 4. Executa a consulta para buscar os dados da página
     const snapshot = await dadosQuery.get();
-
     const pedidos = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
@@ -80,34 +74,28 @@ app.get('/api/pedidos', async (req: Request, res: Response) => {
 });
 
 /**
- * Endpoint para criar um novo pedido (VERSÃO ATUALIZADA).
- * Agora recebe um clienteId e os novos campos do pedido.
+ * Endpoint para CRIAR um novo pedido.
  */
 app.post('/api/pedidos', async (req: Request, res: Response) => {
   try {
     const pedidoData = req.body;
-
-    // 1. Validação do payload com os novos campos
     const { clienteId, valor, status_pagamento, quantidade_caixas, tem_fardo } = pedidoData;
     if (!clienteId || !valor || !status_pagamento || quantidade_caixas === undefined || tem_fardo === undefined) {
       return res.status(400).json({ message: 'Erro de validação. Campos obrigatórios ausentes.' });
     }
 
-    // 2. Estrutura o novo objeto de pedido para salvar no Firestore
     const novoPedido = {
-      clienteId, // <-- Agora salvamos apenas a referência ao cliente
+      clienteId, 
       valor,
       status_pagamento,
-      quantidade_caixas, // <-- Novo campo
-      tem_fardo,         // <-- Novo campo
+      quantidade_caixas, 
+      tem_fardo,
       status_entrega: 'preparado',
       criado_em: new Date(),
       motorista_id: null
     };
 
-    // 3. Adiciona o novo pedido à coleção 'pedidos'
     const docRef = await db.collection('pedidos').add(novoPedido);
-
     console.log(`Pedido ${docRef.id} criado para o cliente ${clienteId}.`);
 
     res.status(201).json({
@@ -120,239 +108,257 @@ app.post('/api/pedidos', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Erro interno no servidor ao salvar o pedido.' });
   }
 });
-app.post('/api/entrega/retirada', async (req: Request, res: Response) => {
-  try {
-    const { pedidoId, motoristaId } = req.body;
 
-    // 1. Validação do payload (corpo da requisição)
-    if (!pedidoId || !motoristaId) {
-      return res.status(400).json({ message: 'pedidoId e motoristaId são obrigatórios.' });
+/**
+ * Endpoint para BUSCAR um pedido específico pelo ID.
+ */
+app.get('/api/pedidos/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'O ID do pedido é obrigatório.' });
     }
 
-    // 2. Referência ao documento específico no Firestore
-    const pedidoRef = db.collection('pedidos').doc(pedidoId);
+    const pedidoRef = db.collection('pedidos').doc(id);
     const doc = await pedidoRef.get();
 
-    // 3. Validação da regra de negócio
     if (!doc.exists) {
       return res.status(404).json({ message: 'Pedido não encontrado.' });
     }
 
-    if (doc.data()?.status_entrega !== 'preparado') {
-      return res.status(409).json({ message: 'Este pedido não está com o status "preparado", portanto não pode ser retirado.' });
+    const data = doc.data();
+    if (!data) {
+      return res.status(500).json({ message: 'Não foi possível ler os dados do documento.' });
     }
 
-    // 4. Atualização dos dados no Firestore
-    await pedidoRef.update({
-      status_entrega: 'saiu',         // [cite: 68]
-      motorista_id: motoristaId,      // [cite: 69]
-      horario_saida: new Date()       // [cite: 70]
+    res.status(200).json({
+      id: doc.id,
+      ...data,
+      criado_em: (data.criado_em && typeof data.criado_em.toDate === 'function')
+                  ? data.criado_em.toDate().toISOString()
+                  : data.criado_em
     });
 
-    console.log(`Pedido ${pedidoId} atualizado para 'saiu', atribuído ao motorista ${motoristaId}.`);
+  } catch (error) {
+    console.error("Erro ao buscar pedido:", error);
+    res.status(500).json({ message: 'Erro ao buscar pedido.' });
+  }
+});
 
+/**
+ * Endpoint para ATUALIZAR um pedido existente.
+ */
+app.put('/api/pedidos/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const pedidoData = req.body; 
+
+    if (!id) {
+      return res.status(400).json({ message: 'O ID do pedido é obrigatório.' });
+    }
+
+    delete pedidoData.id;
+    delete pedidoData.criado_em; 
+    delete pedidoData.clienteId; 
+    delete pedidoData.nomeCliente; 
+    delete pedidoData.enderecoCliente;
+
+    const pedidoRef = db.collection('pedidos').doc(id);
+    await pedidoRef.update(pedidoData);
+
+    console.log(`Pedido ${id} atualizado com sucesso.`);
+    res.status(200).json({ message: `Pedido ${id} atualizado com sucesso.` });
+
+  } catch (error) {
+    console.error("Erro ao atualizar pedido:", error);
+    res.status(500).json({ message: 'Erro ao atualizar pedido.' });
+  }
+});
+
+/**
+ * Endpoint para CANCELAR um pedido.
+ * Esta é a rota que estava a falhar (404), agora no sítio certo.
+ */
+app.post('/api/pedidos/cancelar', async (req: Request, res: Response) => {
+  try {
+    const { pedidoId } = req.body;
+
+    if (!pedidoId) {
+      return res.status(400).json({ message: 'O pedidoId é obrigatório.' });
+    }
+
+    const pedidoRef = db.collection('pedidos').doc(pedidoId);
+    const doc = await pedidoRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Pedido não encontrado.' });
+    }
+
+    const statusAtual = doc.data()?.status_entrega;
+    if (statusAtual === 'entregue') {
+       return res.status(409).json({ message: 'Não é possível cancelar um pedido que já foi entregue.' });
+    }
+    if (statusAtual === 'cancelado') {
+        return res.status(409).json({ message: 'Este pedido já está cancelado.' });
+     }
+
+    await pedidoRef.update({
+      status_entrega: 'cancelado',
+      horario_cancelamento: new Date()
+    });
+
+    console.log(`Pedido ${pedidoId} cancelado com sucesso.`);
+    res.status(200).json({ message: `Pedido ${pedidoId} cancelado com sucesso.` });
+
+  } catch (error) {
+    console.error("Erro ao cancelar o pedido:", error);
+    res.status(500).json({ message: 'Erro interno no servidor ao cancelar o pedido.' });
+  }
+});
+
+
+// --- ENDPOINTS DE ENTREGA ---
+
+app.post('/api/entrega/retirada', async (req: Request, res: Response) => {
+  try {
+    const { pedidoId, motoristaId } = req.body;
+    if (!pedidoId || !motoristaId) {
+      return res.status(400).json({ message: 'pedidoId e motoristaId são obrigatórios.' });
+    }
+    const pedidoRef = db.collection('pedidos').doc(pedidoId);
+    const doc = await pedidoRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Pedido não encontrado.' });
+    }
+    if (doc.data()?.status_entrega !== 'preparado') {
+      return res.status(409).json({ message: 'Este pedido não está com o status "preparado".' });
+    }
+    await pedidoRef.update({
+      status_entrega: 'saiu',
+      motorista_id: motoristaId,
+      horario_saida: new Date()
+    });
+    console.log(`Pedido ${pedidoId} atualizado para 'saiu'.`);
     res.status(200).json({ message: `Pedido ${pedidoId} saiu para entrega.` });
-
   } catch (error) {
     console.error("Erro ao atualizar o pedido:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao atualizar o pedido.' });
   }
 });
+
 app.post('/api/entrega/concluir', async (req: Request, res: Response) => {
   try {
     const { pedidoId, valor_pago, forma_pagamento } = req.body;
-
-    // 1. Validação do payload
     if (!pedidoId) {
       return res.status(400).json({ message: 'O pedidoId é obrigatório.' });
     }
-
-    // 2. Referência e busca do documento
     const pedidoRef = db.collection('pedidos').doc(pedidoId);
     const doc = await pedidoRef.get();
-
-    // 3. Validação da regra de negócio
     if (!doc.exists) {
       return res.status(404).json({ message: 'Pedido não encontrado.' });
     }
-    // A entrega só pode ser concluída se o pedido "saiu" para entrega 
     if (doc.data()?.status_entrega !== 'saiu') {
-      return res.status(409).json({ message: 'Este pedido não pode ser marcado como entregue, pois não está com o status "saiu".' });
+      return res.status(409).json({ message: 'Este pedido não está com o status "saiu".' });
     }
-
-    // 4. Preparação dos dados para atualização
     const dadosAtualizacao: { [key: string]: any } = {
-      status_entrega: 'entregue', // O status sempre muda para 'entregue' 
+      status_entrega: 'entregue',
       horario_entrega: new Date()
     };
-
-    // Adiciona os dados de pagamento apenas se eles foram enviados 
     if (valor_pago && forma_pagamento) {
       dadosAtualizacao.valor_pago = valor_pago;
       dadosAtualizacao.forma_pagamento = forma_pagamento;
     }
-
-    // 5. Atualização no Firestore
     await pedidoRef.update(dadosAtualizacao);
-
     console.log(`Entrega do pedido ${pedidoId} concluída.`);
-
     res.status(200).json({ message: `Pedido ${pedidoId} entregue com sucesso.` });
-
   } catch (error) {
     console.error("Erro ao concluir a entrega:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao concluir a entrega.' });
   }
 });
+
+
+// --- ENDPOINTS FINANCEIRO ---
+
 app.post('/api/financeiro/dar-baixa', async (req: Request, res: Response) => {
   try {
     const { pedidoId, id_caixa } = req.body;
-
-    // 1. Validação do payload
     if (!pedidoId || !id_caixa) {
       return res.status(400).json({ message: 'pedidoId e id_caixa são obrigatórios.' });
     }
-
-    // 2. Referência e busca do documento
     const pedidoRef = db.collection('pedidos').doc(pedidoId);
     const doc = await pedidoRef.get();
-
-    // 3. Validação do pedido
     if (!doc.exists) {
       return res.status(404).json({ message: 'Pedido não encontrado.' });
     }
-
-    // Opcional: Poderíamos validar se o pedido já foi conferido, mas por agora vamos seguir a spec
-    // que apenas adiciona os campos.
-
-    // 4. Atualização no Firestore, adicionando os campos de conferência
     await pedidoRef.update({
       conferido_por: id_caixa,
       horario_conferencia: new Date()
     });
-
     console.log(`Caixa ${id_caixa} deu baixa no pedido ${pedidoId}.`);
-
     res.status(200).json({ message: `Baixa no pedido ${pedidoId} realizada com sucesso.` });
-
   } catch (error) {
     console.error("Erro ao dar baixa no pedido:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao dar baixa no pedido.' });
   }
 });
-app.post('/api/financeiro/dar-baixa', async (req: Request, res: Response) => {
-  try {
-    const { pedidoId, id_caixa } = req.body;
 
-    // 1. Validação do payload
-    if (!pedidoId || !id_caixa) {
-      return res.status(400).json({ message: 'pedidoId e id_caixa são obrigatórios.' });
-    }
 
-    // 2. Referência e busca do documento
-    const pedidoRef = db.collection('pedidos').doc(pedidoId);
-    const doc = await pedidoRef.get();
+// --- ENDPOINTS DE CLIENTES ---
 
-    // 3. Validação do pedido
-    if (!doc.exists) {
-      return res.status(404).json({ message: 'Pedido não encontrado.' });
-    }
-
-    // Opcional: Poderíamos validar se o pedido já foi conferido, mas por agora vamos seguir a spec
-    // que apenas adiciona os campos.
-
-    // 4. Atualização no Firestore, adicionando os campos de conferência
-    await pedidoRef.update({
-      conferido_por: id_caixa,
-      horario_conferencia: new Date()
-    });
-
-    console.log(`Caixa ${id_caixa} deu baixa no pedido ${pedidoId}.`);
-
-    res.status(200).json({ message: `Baixa no pedido ${pedidoId} realizada com sucesso.` });
-
-  } catch (error) {
-    console.error("Erro ao dar baixa no pedido:", error);
-    res.status(500).json({ message: 'Erro interno no servidor ao dar baixa no pedido.' });
-  }
-});
-/**
- * Endpoint para cadastrar um novo cliente.
- */
 app.post('/api/clientes', async (req: Request, res: Response) => {
   try {
     const clienteData = req.body;
-
-    // Validação básica dos dados recebidos
     if (!clienteData.nome || !clienteData.endereco || !clienteData.bairro) {
       return res.status(400).json({ message: 'Nome, endereço e bairro são obrigatórios.' });
     }
-
-    // Estrutura o objeto a ser salvo na coleção 'clientes'
     const novoCliente = {
       nome: clienteData.nome,
-      telefone: clienteData.telefone || null, // Telefone é opcional
+      telefone: clienteData.telefone || null,
       endereco: clienteData.endereco,
       bairro_cep: clienteData.bairro,
       criado_em: new Date(),
     };
-
     const docRef = await db.collection('clientes').add(novoCliente);
-
     console.log(`Cliente ${docRef.id} cadastrado com sucesso.`);
-
     res.status(201).json({
       message: 'Cliente cadastrado com sucesso!',
       clienteId: docRef.id,
     });
-
   } catch (error) {
     console.error("Erro ao cadastrar cliente:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao cadastrar cliente.' });
   }
 });
-/**
- * Endpoint para buscar clientes.
- * Se um parâmetro 'search' for enviado, filtra pelo nome.
- * Caso contrário, retorna todos os clientes.
- */
+
 app.get('/api/clientes', async (req: Request, res: Response) => {
   try {
     const pagina = parseInt(req.query.pagina as string);
     const limite = parseInt(req.query.limite as string);
     const searchTerm = req.query.search as string;
-
     const colecaoClientes = db.collection('clientes');
-
-    // A MUDANÇA ESTÁ AQUI: Adicionamos o .orderBy('nome')
     let query: Query = colecaoClientes.orderBy('nome', 'asc');
-
-    // Essa parte de contagem do total e busca de todos os clientes ainda é necessária
-    // para a paginação e para a busca por termo funcionarem corretamente.
+    
     const totalSnapshot = await query.get();
-let todosClientes = totalSnapshot.docs.map(doc => {
-  const data = doc.data();
-  return {
-    id: doc.id,
-    ...data,
-    // Converte o Timestamp do Firestore para um texto (string) no formato ISO
-    criado_em: data.criado_em.toDate().toISOString(),
-  };
-}) as Cliente[];
+    let todosClientes = totalSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        criado_em: data.criado_em.toDate().toISOString(),
+      };
+    }) as Cliente[];
 
     if (searchTerm) {
       todosClientes = todosClientes.filter(c =>
         c.nome.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     const totalResultados = todosClientes.length;
-
     if (pagina && limite) {
       const inicio = (pagina - 1) * limite;
       const fim = inicio + limite;
       const clientesPaginados = todosClientes.slice(inicio, fim);
-
       res.status(200).json({
         dados: clientesPaginados,
         total: totalResultados
@@ -363,81 +369,59 @@ let todosClientes = totalSnapshot.docs.map(doc => {
         total: totalResultados
       });
     }
-
   } catch (error) {
     console.error("Erro ao buscar clientes:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao buscar clientes.' });
   }
 });
-/**
- * Endpoint para atualizar os dados de um cliente existente.
- * Usa o ID do cliente na URL.
- */
+
 app.put('/api/clientes/:id', async (req: Request, res: Response) => {
   try {
-    // 1. Pega o ID da URL
     const { id } = req.params;
-    // 2. Pega os dados a serem atualizados do corpo da requisição
     const clienteData = req.body;
-
-    // 3. Validações
     if (!id) {
       return res.status(400).json({ message: 'O ID do cliente é obrigatório.' });
     }
     if (Object.keys(clienteData).length === 0) {
       return res.status(400).json({ message: 'O corpo da requisição não pode estar vazio.' });
     }
-
-    // 4. Lógica correta de atualização de um único documento
     const clienteRef = db.collection('clientes').doc(id);
     await clienteRef.update(clienteData);
-
     console.log(`Cliente ${id} atualizado com sucesso.`);
-
     res.status(200).json({
       message: `Cliente ${id} atualizado com sucesso.`
     });
-
   } catch (error) {
     console.error("Erro ao atualizar cliente:", error);
     res.status(500).json({ message: 'Erro ao atualizar cliente.' });
   }
 });
+
 app.get('/api/clientes/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
-    // ADICIONE ESTA VERIFICAÇÃO AQUI
     if (!id) {
       return res.status(400).json({ message: 'O ID do cliente é obrigatório.' });
     }
-
-    // O erro na linha abaixo vai sumir após a verificação
     const clienteRef = db.collection('clientes').doc(id);
     const doc = await clienteRef.get();
-
     if (!doc.exists) {
       return res.status(404).json({ message: 'Cliente não encontrado.' });
     }
-
     res.status(200).json({ id: doc.id, ...doc.data() });
-
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar cliente.' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend iniciado na porta ${PORT}`);
-});
+// --- ENDPOINTS DE BAIRROS ---
 
 app.get('/api/bairros', async (req: Request, res: Response) => {
   try {
-    const snapshot = await db.collection('bairros').orderBy('nome').get(); // Ordena alfabeticamente
+    const snapshot = await db.collection('bairros').orderBy('nome').get();
     if (snapshot.empty) {
       return res.status(200).json([]);
     }
-    // Extrai apenas os nomes dos bairros
     const nomesBairros = snapshot.docs.map(doc => doc.data().nome as string);
     res.status(200).json(nomesBairros);
   } catch (error) {
@@ -446,25 +430,9 @@ app.get('/api/bairros', async (req: Request, res: Response) => {
   }
 });
 
-// ROTA PARA ADICIONAR UM NOVO BAIRRO (usaremos no futuro)
-app.post('/api/bairros', async (req: Request, res: Response) => {
-  try {
-    const { nome } = req.body;
-    if (!nome || typeof nome !== 'string') {
-      return res.status(400).json({ message: 'O nome do bairro é obrigatório e deve ser um texto.' });
-    }
-    // Verifica se o bairro já existe para evitar duplicados (case-insensitive)
-    const snapshot = await db.collection('bairros').where('nome', '==', nome).get();
-    if (!snapshot.empty) {
-        return res.status(409).json({ message: `O bairro '${nome}' já existe.` });
-    }
 
-    const docRef = await db.collection('bairros').add({ nome });
-    res.status(201).json({ message: 'Bairro adicionado com sucesso!', id: docRef.id, nome });
-  } catch (error) {
-    console.error("Erro ao adicionar bairro:", error);
-    res.status(500).json({ message: 'Erro interno ao adicionar bairro.' });
-  }
+// --- INICIALIZADOR DO SERVIDOR ---
+// !! ESTE DEVE SER O COMANDO FINAL DO FICHEIRO !!
+app.listen(PORT, () => {
+  console.log(`--- Backend iniciado na porta ${PORT} ---`);
 });
-// Criação de QRcode
-

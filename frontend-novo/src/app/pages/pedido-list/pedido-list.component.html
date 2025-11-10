@@ -1,6 +1,6 @@
 <div class="page-container">
   <div class="header">
-    <h1>Lista de Pedidos</h1>
+    <h1>Pedidos de Venda</h1>
     <button mat-raised-button color="primary" routerLink="/pedidos/novo">Novo Pedido</button>
   </div>
 
@@ -33,7 +33,7 @@
       <!-- Definição da Coluna ID (Nº) -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> Nº </th>
-        <td mat-cell *matCellDef="let pedido"> {{ pedido.id.substring(0, 6) }} </td>
+        <td mat-cell *matCellDef="let pedido"> {{ pedido.id!.substring(0, 6) }} </td>
       </ng-container>
 
       <!-- Definição da Coluna Data -->
@@ -76,18 +76,23 @@
               <mat-icon>edit</mat-icon>
               <span>Editar Pedido</span>
             </button>
-            <button mat-menu-item 
-                    *ngIf="pedido.status_entrega === 'preparado'" 
-                    (click)="marcarComoSaiu(pedido)">
+            <button mat-menu-item *ngIf="pedido.status_entrega === 'preparado'" (click)="marcarComoSaiu(pedido)">
               <mat-icon>local_shipping</mat-icon>
               <span>Marcar como Saiu</span>
             </button>
-            <button mat-menu-item 
-                    *ngIf="pedido.status_entrega === 'saiu'" 
-                    (click)="marcarComoEntregue(pedido)">
+            <button mat-menu-item *ngIf="pedido.status_entrega === 'saiu'" (click)="marcarComoEntregue(pedido)">
               <mat-icon>check_circle</mat-icon>
               <span>Marcar como Entregue</span>
             </button>
+            
+            <ng-container *ngIf="pedido.status_entrega !== 'entregue' && pedido.status_entrega !== 'cancelado'">
+              <mat-divider></mat-divider>
+              <button mat-menu-item color="warn" (click)="cancelarPedido(pedido)">
+                <mat-icon color="warn">cancel</mat-icon>
+                <span>Cancelar Pedido</span>
+              </button>
+            </ng-container>
+
           </mat-menu>
         </td>
       </ng-container>
@@ -121,4 +126,3 @@
   </div>
 
 </div>
-

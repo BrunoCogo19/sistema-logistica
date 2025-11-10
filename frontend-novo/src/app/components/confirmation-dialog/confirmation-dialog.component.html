@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>
+  <mat-icon color="warn">warning</mat-icon> 
+  {{ data.title }}
+</h2>
+<mat-dialog-content>
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onDismiss()">Não, voltar</button>
+  <button mat-flat-button color="warn" (click)="onConfirm()" cdkFocusInitial>Sim, tenho a certeza</button>
+</mat-dialog-actions>

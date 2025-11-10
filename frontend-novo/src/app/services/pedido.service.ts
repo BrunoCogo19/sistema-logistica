@@ -49,7 +49,18 @@ export class PedidoService {
   /**
    * (Futuro) Busca um pedido por ID para a tela de edição
    */
-  getPedidoPorId(id: string): Observable<Pedido> {
-    return this.http.get<Pedido>(`${this.apiUrl}/pedidos/${id}`); // Assumindo que criaremos este endpoint no backend
+   getPedidoPorId(id: string): Observable<Pedido> {
+    return this.http.get<Pedido>(`${this.apiUrl}/pedidos/${id}`);
+  }
+
+/**
+   * MÓDULO 4: Marca um pedido como 'cancelado'
+   */
+  cancelarPedido(pedidoId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/pedidos/cancelar`, { pedidoId });
+  }
+  
+  atualizarPedido(id: string, pedidoData: Partial<Pedido>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/pedidos/${id}`, pedidoData);
   }
 }

@@ -1,41 +1,32 @@
-<!-- Esta div permite-nos focar a impressão apenas nela -->
 <div id="etiqueta-para-imprimir">
   <h2 mat-dialog-title>Etiqueta do Pedido</h2>
-
   <mat-dialog-content>
     <div class="label-container" *ngIf="data.pedido">
-      
       <div class="header">
-        <!-- Mostra apenas os primeiros 8 caracteres do ID do pedido -->
-        <h3>Pedido #{{ data.pedido.id.substring(0, 8) }}</h3>
-        <!-- Usa o DatePipe para formatar a data -->
+        <!-- CORRECÇÃO 1: Adiciona "!" aqui -->
+        <h3>Pedido #{{ data.pedido.id!.substring(0, 8) }}</h3>
         <span>{{ data.pedido.criado_em | date:'dd/MM/yy HH:mm' }}</span>
       </div>
-
       <div class="content">
         <div class="details">
           <p><strong>Cliente:</strong> {{ data.pedido.nomeCliente }}</p>
           <p><strong>Endereço:</strong> {{ data.pedido.enderecoCliente?.rua }}</p>
           <p><strong>Bairro:</strong> {{ data.pedido.enderecoCliente?.bairro }}</p>
+          <p><strong>Valor:</strong> {{ data.pedido.valor | currency:'BRL' }}</p>
           <hr>
           <p><strong>Caixas:</strong> {{ data.pedido.quantidade_caixas }} | <strong>Fardo:</strong> {{ data.pedido.tem_fardo ? 'Sim' : 'Não' }}</p>
-          <!-- Usa o CurrencyPipe para formatar o valor -->
-          <p><strong>Valor:</strong> {{ data.pedido.valor | currency:'BRL' }}</p>
-          <!-- Usa o operador ternário para o status de pagamento -->
           <p><strong>Pagamento:</strong> {{ data.pedido.status_pagamento === 'na_entrega' ? 'NA ENTREGA' : 'PAGO' }}</p>
         </div>
         <div class="qr-code">
-          <!-- Usa o QRCodeComponent (que importámos no .ts) para gerar o QR Code -->
-          <qrcode [qrdata]="data.pedido.id" [width]="128"></qrcode>
+          <!-- CORRECÇÃO 2: Adiciona "!" aqui -->
+          <qrcode [qrdata]="data.pedido.id!" [width]="128"></qrcode>
         </div>
       </div>
     </div>
   </mat-dialog-content>
 </div>
 
-<!-- Botões do Modal (não são impressos) -->
 <mat-dialog-actions align="end">
   <button mat-button (click)="fechar()">Fechar</button>
   <button mat-raised-button color="primary" (click)="imprimir()">Imprimir</button>
 </mat-dialog-actions>
-
