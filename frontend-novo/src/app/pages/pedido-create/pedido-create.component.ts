@@ -86,7 +86,7 @@ export class PedidoCreateComponent implements OnInit {
   }
   
   carregarBairros(): void {
-    this.bairroService.listarBairros().subscribe(nomes => {
+    this.bairroService.listarNomesDeBairros().subscribe(nomes => {
       this.bairrosDisponiveis = nomes;
     });
   }

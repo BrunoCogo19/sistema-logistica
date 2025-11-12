@@ -32,3 +32,7 @@ export interface PaginatedResponse<T> {
   dados: T[];
   total: number;
 }
+export interface Bairro {
+  id: string; // O ID do documento (ex: 'centro')
+  nome: string; // O nome formatado (ex: 'Centro')
+}

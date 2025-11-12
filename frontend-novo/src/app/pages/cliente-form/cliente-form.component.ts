@@ -81,7 +81,7 @@ export class ClienteFormComponent implements OnInit {
 
   // Busca os bairros da API
   carregarBairros(): void {
-    this.bairroService.listarBairros().subscribe(
+    this.bairroService.listarNomesDeBairros().subscribe(
       nomes => {
         this.bairrosDisponiveis = nomes;
         // Força o autocomplete a reavaliar as opções filtradas

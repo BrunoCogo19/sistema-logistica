@@ -1,0 +1,39 @@
+.admin-container {
+  padding: 24px;
+}
+
+.tab-content {
+  padding: 16px 0; /* Ajustado para a tabela não ter padding lateral extra */
+}
+
+/* Formulário de adicionar bairro */
+.bairro-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.bairro-form mat-form-field {
+  flex-grow: 1;
+  padding-bottom: 0;
+}
+
+/* Remove a margem de erro/helper do form-field */
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* --- ESTILOS DA TABELA --- */
+
+.table-container {
+  border-radius: 8px;
+  overflow: hidden; /* Garante que o paginador fique dentro da borda */
+}
+
+
+th.mat-header-cell {
+  background-color: #f4f4f4; /* Um cinza claro para o cabeçalho */
+  color: #333;
+  font-weight: bold;
+}
