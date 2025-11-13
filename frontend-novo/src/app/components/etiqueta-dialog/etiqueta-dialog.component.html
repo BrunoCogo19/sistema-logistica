@@ -9,20 +9,26 @@
       </div>
       <div class="content">
         <div class="details">
+          <div *ngIf="data.pedido.nomeMotorista && data.pedido.nomeMotorista !== 'Não atribuído'"
+            class="motorista-info">
+            <h4>Motorista: <strong>{{ data.pedido.nomeMotorista }}</strong></h4>
+          </div>
+          <hr>
           <p><strong>Cliente:</strong> {{ data.pedido.nomeCliente }}</p>
           <p><strong>Endereço:</strong> {{ data.pedido.enderecoCliente?.rua }}</p>
           <p><strong>Bairro:</strong> {{ data.pedido.enderecoCliente?.bairro }}</p>
           <p><strong>Valor:</strong> {{ data.pedido.valor | currency:'BRL' }}</p>
           <hr>
-          <p><strong>Caixas:</strong> {{ data.pedido.quantidade_caixas }} | <strong>Fardo:</strong> {{ data.pedido.tem_fardo ? 'Sim' : 'Não' }}</p>
+          <p><strong>Caixas:</strong> {{ data.pedido.quantidade_caixas }} | <strong>Fardo:</strong> {{
+            data.pedido.tem_fardo ? 'Sim' : 'Não' }}</p>
           <p><strong>Pagamento:</strong> {{ data.pedido.status_pagamento === 'na_entrega' ? 'NA ENTREGA' : 'PAGO' }}</p>
-        </div>
-        <div class="qr-code">
-          <!-- CORRECÇÃO 2: Adiciona "!" aqui -->
-          <qrcode [qrdata]="data.pedido.id!" [width]="128"></qrcode>
+           </div>
+            <div class="qr-code">
+              <!-- CORRECÇÃO 2: Adiciona "!" aqui -->
+              <qrcode [qrdata]="data.pedido.id!" [width]="128"></qrcode>
+            </div>
         </div>
       </div>
-    </div>
   </mat-dialog-content>
 </div>
 

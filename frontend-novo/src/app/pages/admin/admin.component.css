@@ -3,10 +3,10 @@
 }
 
 .tab-content {
-  padding: 16px 0; /* Ajustado para a tabela não ter padding lateral extra */
+  padding: 16px 0;
 }
 
-/* Formulário de adicionar bairro */
+/* --- Estilos do Formulário (Já existia) --- */
 .bairro-form {
   display: flex;
   align-items: center;
@@ -19,21 +19,64 @@
   padding-bottom: 0;
 }
 
-/* Remove a margem de erro/helper do form-field */
 .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
 
-/* --- ESTILOS DA TABELA --- */
-
+/* --- Estilos da Tabela (Já existia) --- */
 .table-container {
   border-radius: 8px;
-  overflow: hidden; /* Garante que o paginador fique dentro da borda */
+  overflow: hidden;
+  margin-top: 16px; /* Adicionado espaço */
 }
 
-
 th.mat-header-cell {
-  background-color: #f4f4f4; /* Um cinza claro para o cabeçalho */
+  background-color: #f4f4f4;
   color: #333;
   font-weight: bold;
+}
+
+/* --- ESTILOS NOVOS (Motorista) --- */
+
+/* Alinha o botão "Novo" à direita */
+.header-botoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Remove clique e foco dos chips */
+.mat-mdc-chip {
+  pointer-events: none !important;
+  cursor: default !important;
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Cores dos Status */
+.mat-mdc-chip.disponivel {
+  background-color: #C8E6C9; /* Verde claro */
+  color: #2E7D32; /* Verde escuro */
+}
+.mat-mdc-chip.em_rota {
+  background-color: #FFF9C4; /* Amarelo claro */
+  color: #F57F17; /* Amarelo escuro */
+}
+.mat-mdc-chip.inativo {
+  background-color: #FFCDD2; /* Vermelho claro */
+  color: #C62828; /* Vermelho escuro */
+}
+
+/* Alinha os botões de ação */
+.mat-column-acoes {
+  width: 120px;
+  text-align: right;
+  padding-right: 16px;
+}
+td.mat-cell:last-of-type {
+  padding-right: 16px;
 }

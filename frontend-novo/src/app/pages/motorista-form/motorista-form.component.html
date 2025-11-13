@@ -1,0 +1,62 @@
+<div class="form-container">
+  
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ isEditMode ? 'Editar Motorista' : 'Novo Motorista' }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        Preencha os dados abaixo
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div *ngIf="isLoading" class="spinner-container">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #motoristaForm="ngForm" *ngIf="!isLoading">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nome Completo</mat-label>
+          <input matInput [(ngModel)]="motorista.nome" name="nome" required>
+        </mat-form-field>
+
+<mat-form-field appearance="outline">
+          <mat-label>Telefone (Opcional)</mat-label>
+          <input matInput [(ngModel)]="motorista.telefone" name="telefone" placeholder="(XX) 9XXXX-XXXX">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="motorista.status" name="status" required>
+            <mat-option *ngFor="let status of listaDeStatus" [value]="status">
+              {{ status | titlecase }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Bairros Atendidos</mat-label>
+          <mat-select [(ngModel)]="motorista.bairros_atendidos" name="bairros" required multiple>
+            <mat-option *ngFor="let bairro of listaDeBairros" [value]="bairro">
+              {{ bairro }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Segure CTRL (ou CMD) para selecionar vários</mat-hint>
+        </mat-form-field>
+      
+        <mat-card-actions>
+          <button mat-stroked-button routerLink="/admin" type="button"> <mat-icon>arrow_back</mat-icon> Voltar
+          </button>
+          <span class="spacer"></span>
+          <button mat-flat-button color="primary" type="submit" [disabled]="motoristaForm.invalid"> <mat-icon>save</mat-icon> Salvar
+          </button>
+        </mat-card-actions>
+        
+      </form> </mat-card-content>
+    
+    </mat-card>
+
+</div>

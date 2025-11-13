@@ -17,11 +17,12 @@ export interface Pedido {
   status_pagamento: 'pago' | 'na_entrega';
   tem_fardo: boolean;
   status_entrega: 'preparado' | 'saiu' | 'entregue' | 'cancelado';
+  motorista_id: string | null;
   criado_em: string; // O backend envia como string ISO
   
   // ADICIONADO: O Bairro é guardado como uma "cópia" no pedido
   bairro?: string; 
-
+  nomeMotorista?: string;
   // Propriedades que adicionamos no frontend para exibição
   nomeCliente?: string;
   enderecoCliente?: { rua: string; bairro: string; };
@@ -35,4 +36,19 @@ export interface PaginatedResponse<T> {
 export interface Bairro {
   id: string; // O ID do documento (ex: 'centro')
   nome: string; // O nome formatado (ex: 'Centro')
+}
+export type StatusMotorista = 'disponivel' | 'em_rota' | 'inativo';
+export interface Motorista {
+  id: string;
+  nome: string;
+  telefone?: string;
+  status: StatusMotorista;
+  bairros_atendidos: string[]; // Lista de nomes de bairros
+  
+  // Dados de Carga (lidos do backend)
+  capacidade_maxima_caixas: number;
+  carga_atual_pedidos: number;
+  carga_atual_caixas: number;
+  ultima_atribuicao_em?: any; 
+  criado_em?: any;
 }

@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../services/pedido.service';
 import { ClienteService } from '../../services/cliente.service';
 import { Pedido, Cliente } from '../../types';
+import { forkJoin } from 'rxjs';
+import { MotoristaService } from '../../services/motorista.service';
+import { Motorista } from '../../types';
 
 // Imports do Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -58,49 +61,74 @@ export class PedidoListComponent implements OnInit {
     private pedidoService: PedidoService,
     private clienteService: ClienteService,
     private router: Router, 
+    private motoristaService: MotoristaService,
     private dialog: MatDialog, 
     private snackBar: MatSnackBar 
   ) {}
 
   ngOnInit(): void { this.carregarDados(); }
   
-  carregarDados(): void {
-    this.pedidoService.listarPedidos(this.pageIndex + 1, this.pageSize, this.statusFiltro)
-      .subscribe(resposta => {
-         if (resposta.dados && resposta.dados.length > 0) {
-           this.clienteService.listarTodosClientes().subscribe({
-             next: (clientes: Cliente[]) => {
-               const mapaClientes = new Map(clientes.map(c => [c.id!, c.nome]));
-               const mapaEnderecos = new Map(clientes.map(c => [c.id!, { rua: c.endereco, bairro: c.bairro }]));
+carregarDados(): void {
+  this.pedidoService.listarPedidos(this.pageIndex + 1, this.pageSize, this.statusFiltro)
+    .subscribe(resposta => {
 
-               this.pedidos = resposta.dados.map(pedido => ({
-                 ...pedido,
-                 nomeCliente: mapaClientes.get(pedido.clienteId) || 'Cliente não encontrado',
-                 enderecoCliente: mapaEnderecos.get(pedido.clienteId)
-               } as Pedido));
-               this.totalPedidos = resposta.total;
-               this.aplicarFiltroNome();
-             },
-             error: (err) => {
-               console.error("ERRO CRÍTICO AO BUSCAR CLIENTES:", err);
-               this.snackBar.open('Erro ao carregar nomes de clientes. Mostrando pedidos sem nome.', 'Fechar', { duration: 5000 });
-               
-               this.pedidos = resposta.dados.map(pedido => ({
-                 ...pedido,
-                 nomeCliente: 'Erro (Ref: ' + pedido.clienteId.substring(0, 4) + ')',
-                 enderecoCliente: undefined
-               } as Pedido));
-               this.totalPedidos = resposta.total;
-               this.aplicarFiltroNome();
-             }
-           });
-         } else {
-           this.pedidos = [];
-           this.pedidosFiltrados = [];
-           this.totalPedidos = 0;
-         }
+      if (!resposta.dados || resposta.dados.length === 0) {
+        this.pedidos = [];
+        this.pedidosFiltrados = [];
+        this.totalPedidos = 0;
+        return; // Sai da função se não houver pedidos
+      }
+
+      // --- MELHORIA COM forkJoin ---
+      // Vamos buscar clientes E motoristas ao mesmo tempo.
+      const clientes$ = this.clienteService.listarTodosClientes();
+      const motoristas$ = this.motoristaService.listarMotoristas(); // <-- NOVO
+
+      forkJoin({
+        clientes: clientes$,
+        motoristas: motoristas$ // <-- NOVO
+      }).subscribe({
+        next: ({ clientes, motoristas }) => { // <-- Recebe os dois
+
+          // 1. Mapa de Clientes (como antes)
+          const mapaClientes = new Map(clientes.map(c => [c.id!, c.nome]));
+          const mapaEnderecos = new Map(clientes.map(c => [c.id!, { rua: c.endereco, bairro: c.bairro }]));
+
+          // 2. Mapa de Motoristas (NOVO)
+          const mapaMotoristas = new Map(motoristas.map(m => [m.id, m.nome]));
+
+          // 3. Mapeia os Pedidos (Atualizado)
+          this.pedidos = resposta.dados.map(pedido => ({
+            ...pedido,
+            nomeCliente: mapaClientes.get(pedido.clienteId) || 'Cliente não encontrado',
+            enderecoCliente: mapaEnderecos.get(pedido.clienteId),
+
+            // --- A GRANDE MUDANÇA ESTÁ AQUI ---
+            nomeMotorista: pedido.motorista_id 
+                           ? mapaMotoristas.get(pedido.motorista_id) || 'Não atribuído' 
+                           : 'Não atribuído'
+          } as Pedido));
+
+          this.totalPedidos = resposta.total;
+          this.aplicarFiltroNome();
+        },
+        error: (err: any) => {
+          // (Este é o teu bloco de erro antigo, agora com fallback para motorista)
+          console.error("ERRO CRÍTICO AO BUSCAR DADOS (Clientes ou Motoristas):", err);
+          this.snackBar.open('Erro ao carregar dados de clientes/motoristas.', 'Fechar', { duration: 5000 });
+
+          this.pedidos = resposta.dados.map(pedido => ({
+             ...pedido,
+             nomeCliente: 'Erro (Ref: ' + pedido.clienteId.substring(0, 4) + ')',
+             nomeMotorista: 'Erro' // <-- NOVO
+          } as Pedido));
+          this.totalPedidos = resposta.total;
+          this.aplicarFiltroNome();
+        }
       });
-  }
+      // --- FIM DO forkJoin ---
+    });
+}
   
   aplicarFiltroNome(): void {
     const termo = this.termoBuscaCliente.toLowerCase().trim();

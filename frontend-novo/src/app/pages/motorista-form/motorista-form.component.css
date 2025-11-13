@@ -1,0 +1,38 @@
+.form-container {
+  max-width: 700px;
+  margin: 24px auto; /* Centraliza o formulário */
+  padding: 16px;
+}
+
+mat-card-content {
+  padding-top: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Espaço entre os campos */
+}
+
+/* Faz os campos ocuparem 100% da largura */
+mat-form-field {
+  width: 100%;
+}
+
+/* Contêiner do spinner de carregamento */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Botões de Ação */
+mat-card-actions {
+  display: flex;
+  padding: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

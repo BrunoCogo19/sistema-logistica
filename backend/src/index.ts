@@ -406,23 +406,23 @@ app.post('/api/entrega/concluir', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'O pedidoId é obrigatório.' });
     }
 
+    // 1. Busca o Pedido
     const pedidoRef = db.collection('pedidos').doc(pedidoId);
-    const doc = await pedidoRef.get();
+    const docPedido = await pedidoRef.get();
 
-    if (!doc.exists) {
+    if (!docPedido.exists) {
       return res.status(404).json({ message: 'Pedido não encontrado.' });
     }
 
-    const dadosPedido = doc.data();
-
+    const dadosPedido = docPedido.data();
     if (dadosPedido?.status_entrega !== 'saiu') {
       return res.status(409).json({ message: 'Este pedido não está com o status "saiu".' });
     }
 
-    // --- Atualização com Batch ---
+    // --- Lógica de Atualização (Batch) ---
     const batch = db.batch();
 
-    // 1. Prepara a atualização do Pedido
+    // 2. Atualiza o Pedido (marca como 'entregue')
     const dadosAtualizacaoPedido: { [key: string]: any } = {
       status_entrega: 'entregue',
       horario_entrega: new Date()
@@ -434,17 +434,39 @@ app.post('/api/entrega/concluir', async (req: Request, res: Response) => {
     batch.update(pedidoRef, dadosAtualizacaoPedido);
 
 
-    // 2. Prepara a atualização do Motorista (se ele existir)
+    // 3. ATUALIZA O MOTORISTA (Lógica Corrigida)
     const motoristaId = dadosPedido?.motorista_id;
     const cargaPedido = dadosPedido?.quantidade_caixas || 0;
 
     if (motoristaId) {
       const motoristaRef = db.collection('motoristas').doc(motoristaId);
-      batch.update(motoristaRef, {
-        status: 'disponivel', // Motorista está livre para a próxima
-        carga_atual_caixas: FieldValue.increment(-cargaPedido),  // Devolve a capacidade
-        carga_atual_pedidos: FieldValue.increment(-1)
-      });
+      
+      // Busca os dados ATUAIS do motorista
+      const docMotorista = await motoristaRef.get();
+      
+      if (docMotorista.exists) {
+        const dadosMotorista = docMotorista.data();
+        const cargaAtualPedidos = dadosMotorista?.carga_atual_pedidos || 0;
+
+        // Prepara a atualização do motorista
+        const dadosAtualizacaoMotorista: { [key: string]: any } = {
+          carga_atual_caixas: FieldValue.increment(-cargaPedido),
+          carga_atual_pedidos: FieldValue.increment(-1)
+        };
+
+        // ESTA É A NOVA LÓGICA:
+        // Se esta for a ÚLTIMA entrega (carga == 1), volta para 'disponivel'.
+        // Caso contrário, ele continua 'em_rota'.
+        if (cargaAtualPedidos <= 1) {
+          dadosAtualizacaoMotorista.status = 'disponivel';
+          console.log(`Motorista ${motoristaId} entregou o último pedido. Status: disponivel.`);
+        } else {
+          console.log(`Motorista ${motoristaId} ainda tem ${cargaAtualPedidos - 1} pedidos. Status: em_rota.`);
+          // (O status dele já é 'em_rota', então não precisamos de o definir)
+        }
+
+        batch.update(motoristaRef, dadosAtualizacaoMotorista);
+      }
     }
 
     await batch.commit();

@@ -4,6 +4,7 @@ import { PedidoCreateComponent } from './pages/pedido-create/pedido-create.compo
 import { ClienteListComponent } from './pages/cliente-list/cliente-list.component';
 import { ClienteFormComponent } from './pages/cliente-form/cliente-form.component';
 import { AdminComponent } from './pages/admin/admin.component';
+import { MotoristaFormComponent } from './pages/motorista-form/motorista-form.component';
 
 export const routes: Routes = [
   // Rotas principais
@@ -12,6 +13,8 @@ export const routes: Routes = [
   { path: 'pedidos/novo', component: PedidoCreateComponent },
   { path: 'pedidos/editar/:id', component: PedidoCreateComponent },
   { path: 'admin', component: AdminComponent },
+  { path: 'motoristas/novo', component: MotoristaFormComponent },
+  { path: 'motoristas/editar/:id', component: MotoristaFormComponent },
   
   
   // Rotas de Clientes
