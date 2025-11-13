@@ -10,7 +10,7 @@ type Cliente = {
   nome: string;
   telefone?: string;
   endereco: string;
-  bairro_cep: string;
+  bairro: string;
   criado_em: any;
 };
 
@@ -40,7 +40,7 @@ async function tentarAtribuirRotaAutomatica(pedidoId: string, clienteId: string,
       console.log(`ALGORITMO: Cliente ${clienteId} não encontrado. Atribuição cancelada.`);
       return;
     }
-    const bairro = clienteDoc.data()?.bairro_cep;
+    const bairro = clienteDoc.data()?.bairro;
     if (!bairro) {
       console.log(`ALGORITMO: Cliente ${clienteId} não tem bairro. Atribuição cancelada.`);
       return;
@@ -497,7 +497,7 @@ app.post('/api/clientes', async (req: Request, res: Response) => {
       nome: clienteData.nome,
       telefone: clienteData.telefone || null,
       endereco: clienteData.endereco,
-      bairro_cep: clienteData.bairro,
+      bairro: clienteData.bairro,
       criado_em: new Date(),
     };
     const docRef = await db.collection('clientes').add(novoCliente);

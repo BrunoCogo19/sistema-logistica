@@ -47,9 +47,9 @@ export class PedidoListComponent implements OnInit {
   statusFiltro: string = 'preparado'; 
   statusList = [
     { value: 'todos', label: 'Todos' },
-    { value: 'preparado', label: 'Em Aberto' },
-    { value: 'saiu', label: 'Preparando Envio' },
-    { value: 'entregue', label: 'Entregue' },
+    { value: 'preparado', label: 'Em separação' },
+    { value: 'saiu', label: 'Saiu para entrega' },
+    { value: 'entregue', label: 'Entrega Concluida' },
     { value: 'cancelado', label: 'Cancelado' }
   ];
   termoBuscaCliente: string = '';
@@ -143,31 +143,39 @@ export class PedidoListComponent implements OnInit {
     this.router.navigate(['/pedidos/editar', pedido.id!]); // Corrigido com !
   }
 
-  marcarComoSaiu(pedido: Pedido): void {
-    this.pedidoService.marcarComoSaiu(pedido.id!).subscribe({ // Corrigido com !
-      next: () => {
-        this.snackBar.open(`Pedido #${pedido.id!.substring(0,6)} saiu para entrega!`, 'OK', { duration: 3000 }); // Corrigido com !
-        this.carregarDados();
-      },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('Erro ao actualizar status.', 'Fechar', { duration: 3000 });
-      }
-    });
-  }
+marcarComoSaiu(pedido: Pedido): void {
+    this.pedidoService.marcarComoSaiu(pedido.id!).subscribe({ 
+      next: () => {
+        this.snackBar.open(`Pedido #${pedido.id!.substring(0,6)} saiu para entrega!`, 'OK', { duration: 3000 }); 
+        this.carregarDados();
+      },
+      error: (err) => {
+        // --- CORREÇÃO APLICADA ---
+        console.error("Erro ao marcar como 'Saiu':", err);
+        // Tenta ler a mensagem de erro específica da API
+        const mensagemApi = err.error?.message || 'Erro ao atualizar status.';
+        // Mostra a mensagem da API (ou a genérica se falhar)
+        this.snackBar.open(mensagemApi, 'Fechar', { duration: 5000 }); // Aumentei o tempo
+      }
+    });
+  }
 
-  marcarComoEntregue(pedido: Pedido): void {
-    this.pedidoService.marcarComoEntregue(pedido.id!).subscribe({ // Corrigido com !
-      next: () => {
-        this.snackBar.open(`Pedido #${pedido.id!.substring(0,6)} marcado como entregue!`, 'OK', { duration: 3000 }); // Corrigido com !
-        this.carregarDados();
-      },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('Erro ao actualizar status.', 'Fechar', { duration: 3000 });
-      }
-    });
-  }
+marcarComoEntregue(pedido: Pedido): void {
+    this.pedidoService.marcarComoEntregue(pedido.id!).subscribe({ 
+      next: () => {
+        this.snackBar.open(`Pedido #${pedido.id!.substring(0,6)} foi marcado como entregue!`, 'OK', { duration: 3000 }); 
+        this.carregarDados();
+      },
+      error: (err) => {
+        // --- CORREÇÃO APLICADA ---
+        console.error("Erro ao marcar como 'Entregue':", err);
+        // Tenta ler a mensagem de erro específica da API
+        const mensagemApi = err.error?.message || 'Erro ao atualizar status.';
+        // Mostra a mensagem da API (ou a genérica se falhar)
+        this.snackBar.open(mensagemApi, 'Fechar', { duration: 5000 }); // Aumentei o tempo
+      }
+    });
+  }
 
   cancelarPedido(pedido: Pedido): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

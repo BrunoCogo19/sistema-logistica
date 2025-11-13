@@ -6,27 +6,29 @@
       </mat-card-title>
     </mat-card-header>
 
-    <mat-card-content>
-      <form (ngSubmit)="salvar()">
+    <form (ngSubmit)="salvar()">
+
+      <mat-card-content>
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Nome Completo</mat-label>
           <input matInput name="nome" [(ngModel)]="cliente.nome" required>
         </mat-form-field>
 
-<mat-form-field appearance="fill" class="full-width">
-  <mat-label>Telefone</mat-label>
-  <input matInput 
-         name="telefone" 
-         [(ngModel)]="cliente.telefone"
-         (input)="formatPhone($event)"  
-         placeholder="(XX) XXXXX-XXXX"> </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Telefone</mat-label>
+          <input matInput 
+                 name="telefone" 
+                 [(ngModel)]="cliente.telefone"
+                 (input)="formatPhone($event)"  
+                 placeholder="(XX) XXXXX-XXXX">
+        </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Endereço</mat-label>
           <input matInput name="endereco" [(ngModel)]="cliente.endereco" required>
         </mat-form-field>
 
-<mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Bairro</mat-label>
           <input type="text"
                  placeholder="Digite para buscar..."
@@ -40,11 +42,13 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-      </form>
-    </mat-card-content>
+        
+      </mat-card-content>
 
-    <mat-card-actions align="end">
-      <button mat-raised-button color="primary" (click)="salvar()">Salvar</button>
-    </mat-card-actions>
-  </mat-card>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="primary" type="submit">Salvar</button>
+      </mat-card-actions>
+
+    </form>
+    </mat-card>
 </div>
