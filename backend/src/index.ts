@@ -62,8 +62,8 @@ async function tentarAtribuirRotaAutomatica(pedidoId: string, clienteId: string,
 
     // 3. FILTRAR POR CAPACIDADE (Regra: 20 caixas)
     const candidatos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-    
-    const candidatosComCapacidade = candidatos.filter(m => 
+
+    const candidatosComCapacidade = candidatos.filter(m =>
       (m.carga_atual_caixas + cargaPedido) <= m.capacidade_maxima_caixas
     );
 
@@ -149,7 +149,7 @@ app.get('/api/pedidos', async (req: Request, res: Response) => {
     const direcao = req.query.direcao as 'asc' | 'desc' || 'desc';
 
     const colecaoPedidos = db.collection('pedidos');
-    
+
     // Lógica de filtro
     let queryBase: Query = colecaoPedidos;
     if (status && status !== 'todos') {
@@ -182,7 +182,7 @@ app.get('/api/pedidos', async (req: Request, res: Response) => {
       dados: pedidos,
       total: totalPedidos
     });
-    
+
   } catch (error) {
     console.error("Erro ao buscar pedidos:", error);
     res.status(500).json({ message: 'Erro interno no servidor ao buscar pedidos.' });
@@ -258,8 +258,8 @@ app.get('/api/pedidos/:id', async (req: Request, res: Response) => {
       id: doc.id,
       ...data,
       criado_em: (data.criado_em && typeof data.criado_em.toDate === 'function')
-                  ? data.criado_em.toDate().toISOString()
-                  : data.criado_em
+        ? data.criado_em.toDate().toISOString()
+        : data.criado_em
     });
 
   } catch (error) {
@@ -274,16 +274,16 @@ app.get('/api/pedidos/:id', async (req: Request, res: Response) => {
 app.put('/api/pedidos/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const pedidoData = req.body; 
+    const pedidoData = req.body;
 
     if (!id) {
       return res.status(400).json({ message: 'O ID do pedido é obrigatório.' });
     }
 
     delete pedidoData.id;
-    delete pedidoData.criado_em; 
-    delete pedidoData.clienteId; 
-    delete pedidoData.nomeCliente; 
+    delete pedidoData.criado_em;
+    delete pedidoData.clienteId;
+    delete pedidoData.nomeCliente;
     delete pedidoData.enderecoCliente;
 
     const pedidoRef = db.collection('pedidos').doc(id);
@@ -319,11 +319,11 @@ app.post('/api/pedidos/cancelar', async (req: Request, res: Response) => {
 
     const statusAtual = doc.data()?.status_entrega;
     if (statusAtual === 'entregue') {
-       return res.status(409).json({ message: 'Não é possível cancelar um pedido que já foi entregue.' });
+      return res.status(409).json({ message: 'Não é possível cancelar um pedido que já foi entregue.' });
     }
     if (statusAtual === 'cancelado') {
-        return res.status(409).json({ message: 'Este pedido já está cancelado.' });
-     }
+      return res.status(409).json({ message: 'Este pedido já está cancelado.' });
+    }
 
     await pedidoRef.update({
       status_entrega: 'cancelado',
@@ -367,7 +367,7 @@ app.post('/api/entrega/retirada', async (req: Request, res: Response) => {
     // REGRA DE NEGÓCIO: Só pode sair se o algoritmo já atribuiu um motorista
     const motoristaId = dadosPedido?.motorista_id;
     if (!motoristaId) {
-        return res.status(409).json({ message: 'Pedido ainda não tem um motorista atribuído. Aguarde o algoritmo.' });
+      return res.status(409).json({ message: 'Pedido ainda não tem um motorista atribuído. Aguarde o algoritmo.' });
     }
 
     // --- Atualização com Batch ---
@@ -384,7 +384,7 @@ app.post('/api/entrega/retirada', async (req: Request, res: Response) => {
     batch.update(motoristaRef, {
       status: 'em_rota'
     });
-    
+
     await batch.commit();
     // --- Fim da Atualização ---
 
@@ -440,10 +440,10 @@ app.post('/api/entrega/concluir', async (req: Request, res: Response) => {
 
     if (motoristaId) {
       const motoristaRef = db.collection('motoristas').doc(motoristaId);
-      
+
       // Busca os dados ATUAIS do motorista
       const docMotorista = await motoristaRef.get();
-      
+
       if (docMotorista.exists) {
         const dadosMotorista = docMotorista.data();
         const cargaAtualPedidos = dadosMotorista?.carga_atual_pedidos || 0;
@@ -541,7 +541,7 @@ app.get('/api/clientes', async (req: Request, res: Response) => {
     const searchTerm = req.query.search as string;
     const colecaoClientes = db.collection('clientes');
     let query: Query = colecaoClientes.orderBy('nome', 'asc');
-    
+
     const totalSnapshot = await query.get();
     let todosClientes = totalSnapshot.docs.map(doc => {
       const data = doc.data();
@@ -625,7 +625,7 @@ app.get('/api/bairros', async (req: Request, res: Response) => {
     const limite = parseInt(req.query.limite as string) || 10;
 
     const colecaoBairros = db.collection('bairros');
-    
+
     // 1. Contagem Total (separada)
     const totalSnapshot = await colecaoBairros.get();
     const totalBairros = totalSnapshot.size;
@@ -645,7 +645,7 @@ app.get('/api/bairros', async (req: Request, res: Response) => {
         nome: data.nome // O nome (ex: 'Centro')
       };
     });
-    
+
     // 4. Retornar a resposta paginada
     res.status(200).json({
       dados: bairros,
@@ -667,13 +667,13 @@ app.post('/api/bairros', async (req: Request, res: Response) => {
     if (!nome) {
       return res.status(400).json({ message: 'O nome do bairro é obrigatório.' });
     }
-    
+
     // Verifica se o bairro já existe (para evitar duplicados)
     const bairroRef = db.collection('bairros').doc(nome.toLowerCase());
     const doc = await bairroRef.get();
-    
+
     if (doc.exists) {
-        return res.status(409).json({ message: 'Este bairro já está cadastrado.' });
+      return res.status(409).json({ message: 'Este bairro já está cadastrado.' });
     }
 
     // Adiciona o novo bairro
@@ -695,28 +695,28 @@ app.post('/api/bairros', async (req: Request, res: Response) => {
  * Usamos o nome do bairro como ID na URL.
  */
 app.delete('/api/bairros/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params; // Usamos :id
-        if (!id) {
-             return res.status(400).json({ message: 'O ID do bairro é obrigatório.' });
-        }
-
-        const bairroRef = db.collection('bairros').doc(id); // Usamos o ID
-        const doc = await bairroRef.get();
-
-        if (!doc.exists) {
-            return res.status(404).json({ message: 'Bairro não encontrado.' });
-        }
-
-        await bairroRef.delete();
-        
-        console.log(`Bairro ${id} removido com sucesso.`);
-        res.status(200).json({ message: `Bairro removido com sucesso.` });
-
-    } catch (error) {
-        console.error("Erro ao remover bairro:", error);
-        res.status(500).json({ message: 'Erro interno ao remover bairro.' });
+  try {
+    const { id } = req.params; // Usamos :id
+    if (!id) {
+      return res.status(400).json({ message: 'O ID do bairro é obrigatório.' });
     }
+
+    const bairroRef = db.collection('bairros').doc(id); // Usamos o ID
+    const doc = await bairroRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Bairro não encontrado.' });
+    }
+
+    await bairroRef.delete();
+
+    console.log(`Bairro ${id} removido com sucesso.`);
+    res.status(200).json({ message: `Bairro removido com sucesso.` });
+
+  } catch (error) {
+    console.error("Erro ao remover bairro:", error);
+    res.status(500).json({ message: 'Erro interno ao remover bairro.' });
+  }
 });
 app.get('/api/bairros/lista-nomes', async (req: Request, res: Response) => {
   try {
@@ -727,7 +727,7 @@ app.get('/api/bairros/lista-nomes', async (req: Request, res: Response) => {
     // Extrai apenas os nomes dos bairros
     const nomesBairros = snapshot.docs.map(doc => doc.data().nome as string);
     res.status(200).json(nomesBairros);
-    
+
   } catch (error) {
     console.error("Erro ao buscar lista de nomes de bairros:", error);
     res.status(500).json({ message: 'Erro interno ao buscar lista de nomes.' });
@@ -754,10 +754,10 @@ app.post('/api/motoristas', async (req: Request, res: Response) => {
       telefone: data.telefone || null,
       status: data.status, // 'disponivel', 'em_rota', 'inativo'
       bairros_atendidos: data.bairros_atendidos, // Array de strings
-      
+
       // Capacidade definida na nossa regra de negócio
-      capacidade_maxima_caixas: 20, 
-      
+      capacidade_maxima_caixas: 20,
+
       // Dados de carga e rodízio (iniciam zerados)
       carga_atual_pedidos: 0,
       carga_atual_caixas: 0,
@@ -768,9 +768,9 @@ app.post('/api/motoristas', async (req: Request, res: Response) => {
     const docRef = await db.collection('motoristas').add(novoMotorista);
     console.log(`Motorista ${docRef.id} (${data.nome}) cadastrado.`);
 
-    res.status(201).json({ 
+    res.status(201).json({
       message: 'Motorista cadastrado com sucesso!',
-      motoristaId: docRef.id 
+      motoristaId: docRef.id
     });
 
   } catch (error) {
@@ -785,7 +785,7 @@ app.post('/api/motoristas', async (req: Request, res: Response) => {
 app.get('/api/motoristas', async (req: Request, res: Response) => {
   try {
     const snapshot = await db.collection('motoristas').orderBy('nome').get();
-    
+
     const motoristas = snapshot.docs.map(doc => {
       return {
         id: doc.id,
@@ -806,9 +806,9 @@ app.get('/api/motoristas', async (req: Request, res: Response) => {
  * (Útil para o formulário de edição no frontend)
  */
 app.get('/api/motoristas/:id', async (req: Request, res: Response) => {
-  try {
+  try {
     // 1. Obter o ID dos parâmetros da rota
-    const { id } = req.params;
+    const { id } = req.params;
 
     // 2. VERIFICAÇÃO ADICIONADA
     // Verificamos se o 'id' realmente existe (não é undefined ou uma string vazia)
@@ -816,22 +816,22 @@ app.get('/api/motoristas/:id', async (req: Request, res: Response) => {
       // Se não houver ID, é um "Bad Request" (Pedido Inválido)
       return res.status(400).json({ message: 'O ID do motorista é obrigatório.' });
     }
-    
+
     // 3. Consulta à base de dados
     // Se o código chegou aqui, o TypeScript agora sabe que 'id' é uma string.
-    const doc = await db.collection('motoristas').doc(id).get();
+    const doc = await db.collection('motoristas').doc(id).get();
 
     // 4. O resto do teu código (que já estava correto)
-    if (!doc.exists) {
-      return res.status(404).json({ message: 'Motorista não encontrado.' });
-    }
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'Motorista não encontrado.' });
+    }
 
-    res.status(200).json({ id: doc.id, ...doc.data() });
+    res.status(200).json({ id: doc.id, ...doc.data() });
 
-  } catch (error) {
-    console.error("Erro ao buscar motorista:", error);
-    res.status(500).json({ message: 'Erro interno ao buscar motorista.' });
-  }
+  } catch (error) {
+    console.error("Erro ao buscar motorista:", error);
+    res.status(500).json({ message: 'Erro interno ao buscar motorista.' });
+  }
 });
 
 /**
@@ -870,7 +870,7 @@ app.put('/api/motoristas/:id', async (req: Request, res: Response) => {
     // 5. Atualização (Agora seguro)
     // Se o código chegou aqui, o ID é válido e o motorista existe.
     await motoristaRef.update(data);
-    
+
     console.log(`Motorista ${id} atualizado.`);
     res.status(200).json({ message: `Motorista ${id} atualizado com sucesso.` });
 
@@ -885,10 +885,10 @@ app.put('/api/motoristas/:id', async (req: Request, res: Response) => {
  * Endpoint para REMOVER um motorista.
  */
 app.delete('/api/motoristas/:id', async (req: Request, res: Response) => {
-  try {
+  try {
     // 1. Obter o ID
-    const { id } = req.params;
-    
+    const { id } = req.params;
+
     // 2. VERIFICAÇÃO DE TIPO (Corrige o erro TypeScript)
     // Se o ID não for fornecido na URL, é um pedido inválido.
     if (!id) {
@@ -906,15 +906,119 @@ app.delete('/api/motoristas/:id', async (req: Request, res: Response) => {
 
     // 4. Remoção (Agora seguro)
     // Se o código chegou aqui, o ID é válido e o motorista existe.
-    await motoristaRef.delete();
-    
-    console.log(`Motorista ${id} removido.`);
-    res.status(200).json({ message: 'Motorista removido com sucesso.' });
+    await motoristaRef.delete();
 
-  } catch (error) {
-    console.error("Erro ao remover motorista:", error);
-    res.status(500).json({ message: 'Erro interno ao remover motorista.' });
-  }
+    console.log(`Motorista ${id} removido.`);
+    res.status(200).json({ message: 'Motorista removido com sucesso.' });
+
+  } catch (error) {
+    console.error("Erro ao remover motorista:", error);
+    res.status(500).json({ message: 'Erro interno ao remover motorista.' });
+  }
+});
+
+app.get('/api/dashboard/resumo-geral', async (req: Request, res: Response) => {
+  try {
+    // --- 1. Definição de "Hoje" ---
+    // Precisamos de datas para filtrar os pedidos do dia
+    const agora = new Date();
+    const inicioDoDia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0); // Hoje às 00:00:00
+    const fimDoDia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 23, 59, 59); // Hoje às 23:59:59
+
+    const colecaoPedidos = db.collection('pedidos');
+
+    // --- 2. Cálculos de Status (Tempo Real) ---
+    // (Usamos .get().size em vez de .count() para compatibilidade)
+    const totalPreparado = (await colecaoPedidos.where('status_entrega', '==', 'preparado').get()).size;
+    const totalSaiu = (await colecaoPedidos.where('status_entrega', '==', 'saiu').get()).size;
+    
+    // --- 3. Cálculos de "Hoje" (Entregues) ---
+    const queryEntreguesHoje = colecaoPedidos
+      .where('status_entrega', '==', 'entregue')
+      .where('horario_entrega', '>=', inicioDoDia)
+      .where('horario_entrega', '<=', fimDoDia);
+    
+    const entreguesSnapshot = await queryEntreguesHoje.get();
+    const totalEntregueHoje = entreguesSnapshot.size;
+
+    // --- 4. Cálculos de "Hoje" (Cancelados) ---
+    const queryCanceladosHoje = colecaoPedidos
+      .where('status_entrega', '==', 'cancelado')
+      .where('horario_cancelamento', '>=', inicioDoDia)
+      .where('horario_cancelamento', '<=', fimDoDia);
+      
+    const totalCanceladoHoje = (await queryCanceladosHoje.get()).size;
+
+    // --- 5. Cálculos Financeiros (Baseado nos Entregues Hoje) ---
+    let totalFaturadoHoje = 0;
+    
+    // Este objeto é o que você pediu: "separado por tipo de pagamento"
+    const faturamentoNaEntrega = {
+      dinheiro: 0,
+      pix: 0,
+      credito: 0,
+      debito: 0,
+      outros: 0 // Caso haja algum não mapeado
+    };
+
+    // Usamos os pedidos que já buscamos no Passo 3
+    for (const doc of entreguesSnapshot.docs) {
+      const pedido = doc.data();
+      const valorPedido = pedido.valor || 0; // Pega o valor (ou 0 se não existir)
+      
+      // Soma para o "Total Faturado Hoje"
+      totalFaturadoHoje += valorPedido;
+
+      // Soma para o "Desdobramento por Pagamento"
+      // Verifica se o pagamento foi 'na_entrega' E se tem uma 'forma_pagamento' registrada
+      if (pedido.status_pagamento === 'na_entrega' && pedido.forma_pagamento) {
+        
+        switch (pedido.forma_pagamento) {
+          case 'dinheiro':
+            faturamentoNaEntrega.dinheiro += valorPedido;
+            break;
+          case 'pix':
+            faturamentoNaEntrega.pix += valorPedido;
+            break;
+          case 'credito':
+            faturamentoNaEntrega.credito += valorPedido;
+            break;
+          case 'debito':
+            faturamentoNaEntrega.debito += valorPedido;
+            break;
+          default:
+            faturamentoNaEntrega.outros += valorPedido;
+        }
+      }
+    }
+
+    // --- 6. Monta a Resposta Final ---
+    const resposta = {
+      statusPedidos: {
+        emAberto: totalPreparado,
+        naRua: totalSaiu,
+        entreguesHoje: totalEntregueHoje,
+        canceladosHoje: totalCanceladoHoje
+      },
+      financeiroHoje: {
+        totalFaturado: totalFaturadoHoje,
+        faturamentoNaEntrega: faturamentoNaEntrega // O objeto com o desdobramento
+      }
+    };
+
+    res.status(200).json(resposta);
+
+  } catch (error: any) {
+    console.error("ERRO GRAVE NO DASHBOARD:", error);
+    // Se o erro for de "ÍNDICE", informa o frontend
+    if (error.code === 'FAILED_PRECONDITION') {
+       return res.status(500).json({ 
+         message: 'Erro no Firestore. Um índice composto é necessário.',
+         detalhe: 'Verifique o console do Backend (logs) para o link de criação do índice.'
+       });
+    }
+    res.status(500).json({ message: 'Erro interno ao gerar o resumo.' });
+  }
 });
 
 

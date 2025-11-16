@@ -1,0 +1,17 @@
+/* Faz o campo de valor ocupar a largura total */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Faz o grupo de botões quebrar a linha e ocupar 100% */
+.toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Espaço entre os botões */
+}
+
+.toggle-group mat-button-toggle {
+  flex-grow: 1; /* Faz os botões crescerem para preencher o espaço */
+  min-width: 150px; /* Largura mínima para não ficarem muito pequenos */
+}
