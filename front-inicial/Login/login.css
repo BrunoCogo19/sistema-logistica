@@ -9,10 +9,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 130vh;
+    min-height: 90vh;
+    overflow: hidden;
     background-size: cover;
     background-position: center;
-    background-color: #ffffff;
+    background-color: #f1f1f1;
     padding: 20px;
 
 }
@@ -29,6 +30,7 @@ form {
 .logo {
     width: 250px;
     height: auto;
+    padding: 30px;
     margin-bottom: 0px;
 }
 
@@ -94,7 +96,9 @@ form {
 
 .remember-forgot {
     display: flex;
-    columns: 2;
+    column-count: 2;
+    column-gap: 30px;
+    justify-content: center;
     margin: 0px 5 15px;
 }
 
