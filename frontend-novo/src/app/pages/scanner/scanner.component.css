@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scanner-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #333; /* Fundo escuro */
+  color: white;
+  position: relative;
+}
+
+/* Posiciona o scanner para ocupar o centro */
+zxing-scanner {
+  flex-grow: 1;
+  max-height: 70vh; /* Limita a altura do scanner */
+}
+
+.header, .footer {
+  padding: 16px;
+  text-align: center;
+  z-index: 10;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.header h1 {
+  flex-grow: 1;
+  font-size: 1.2rem;
+  margin: 0;
+  padding-right: 40px; /* Compensa o botão de voltar */
+}
+
+.header button {
+  color: white;
+}
+
+/* Overlay de Carregamento */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}

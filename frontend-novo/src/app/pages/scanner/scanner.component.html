@@ -1,0 +1,26 @@
+<div class="scanner-container">
+  
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <h3>Processando Saída...</h3>
+  </div>
+
+  <div class="header">
+    <button mat-icon-button (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Ler QR Code de Saída</h1>
+  </div>
+
+  <zxing-scanner 
+    *ngIf="scannerEnabled"
+    [formats]="allowedFormats" (scanSuccess)="onScanSuccess($event)"
+    (scanError)="onScanError($event)"
+    (permissionResponse)="scannerEnabled = $event">
+  </zxing-scanner>
+
+  <div class="footer">
+    <p>Aponte a câmera para o QR Code da etiqueta.</p>
+  </div>
+
+</div>

@@ -5,6 +5,8 @@ import { ClienteListComponent } from './pages/cliente-list/cliente-list.componen
 import { ClienteFormComponent } from './pages/cliente-form/cliente-form.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { MotoristaFormComponent } from './pages/motorista-form/motorista-form.component';
+import { ScannerComponent } from './pages/scanner/scanner.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
   // Rotas principais
@@ -15,6 +17,10 @@ export const routes: Routes = [
   { path: 'admin', component: AdminComponent },
   { path: 'motoristas/novo', component: MotoristaFormComponent },
   { path: 'motoristas/editar/:id', component: MotoristaFormComponent },
+  { path: 'scanner', component: ScannerComponent },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent },
+
   
   
   // Rotas de Clientes

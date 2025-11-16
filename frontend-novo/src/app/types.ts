@@ -52,3 +52,25 @@ export interface Motorista {
   ultima_atribuicao_em?: any; 
   criado_em?: any;
 }
+export interface ResumoStatusPedidos {
+  emAberto: number;
+  naRua: number;
+  entreguesHoje: number;
+  canceladosHoje: number;
+}
+
+export interface ResumoFinanceiro {
+  totalFaturado: number;
+  faturamentoNaEntrega: {
+    dinheiro: number;
+    pix: number;
+    credito: number;
+    debito: number;
+    outros: number;
+  };
+}
+
+export interface ResumoDashboard {
+  statusPedidos: ResumoStatusPedidos;
+  financeiroHoje: ResumoFinanceiro;
+}

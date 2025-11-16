@@ -41,9 +41,21 @@ export class PedidoService {
   /**
    * MÓDULO 4: Marca um pedido como 'entregue'
    */
-  marcarComoEntregue(pedidoId: string): Observable<any> {
-    // O payload para concluir é simples, só o ID.
-    return this.http.post(`${this.apiUrl}/entrega/concluir`, { pedidoId });
+marcarComoEntregue(pedidoId: string, valor: number | null, forma: string | null): Observable<any> {
+    
+    // O payload para concluir
+    const payload: any = {
+      pedidoId: pedidoId
+    };
+
+    // Adiciona os dados de pagamento apenas se eles foram enviados
+    if (valor && forma) {
+      payload.valor_pago = valor;
+      payload.forma_pagamento = forma;
+    }
+    
+    // O backend (POST /api/entrega/concluir) já está pronto para isto
+    return this.http.post(`${this.apiUrl}/entrega/concluir`, payload);
   }
 
   /**

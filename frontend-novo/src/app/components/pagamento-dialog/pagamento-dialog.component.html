@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>Registrar Pagamento na Entrega</h1>
+<p>Pedido: <strong>#{{ pedido.id?.substring(0, 6) }}</strong></p>
+
+<div mat-dialog-content>
+  
+  <mat-form-field appearance="outline">
+    <mat-label>Valor Pago</mat-label>
+    <input 
+      matInput 
+      type="number" 
+      [(ngModel)]="dadosRetorno.valor" 
+      name="valor"
+      required>
+  </mat-form-field>
+
+  <mat-label>Forma de Pagamento</mat-label>
+  <mat-button-toggle-group 
+    class="toggle-group"
+    [(ngModel)]="dadosRetorno.forma" 
+    name="formaPagamento" 
+    required
+    aria-label="Forma de Pagamento">
+    
+    <mat-button-toggle value="dinheiro">
+      <mat-icon>payments</mat-icon> Dinheiro
+    </mat-button-toggle>
+    
+    <mat-button-toggle value="pix">
+      <mat-icon>pix</mat-icon> PIX
+    </mat-button-toggle>
+    
+    <mat-button-toggle value="credito">
+      <mat-icon>credit_card</mat-icon> Crédito
+    </mat-button-toggle>
+    
+    <mat-button-toggle value="debito">
+      <mat-icon>credit_card</mat-icon> Débito
+    </mat-button-toggle>
+
+  </mat-button-toggle-group>
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button 
+    mat-flat-button 
+    color="primary" 
+    (click)="onConfirm()" 
+    [disabled]="!dadosRetorno.forma || dadosRetorno.valor <= 0">
+    Confirmar Pagamento
+  </button>
+</div>
