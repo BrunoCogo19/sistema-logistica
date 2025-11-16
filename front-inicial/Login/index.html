@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-widht, initial-scale=1.0">
-     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-     <link rel="shortcut icon" href="Logo Super Kiko(K) (1).png" type="image/x-icon">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="login.css">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
     <title>Login</title>
-<body>
+</head> <body>
     <main class="container">
-       <form> 
-            <div class="Logo">   
-               <img src="Logo Super Kiko (1).png" alt="Logo Super Kiko"> 
-            </div>
-            
+        <form>
+            <div class="logo">
+                <img src="superKikoLog.png" alt="Logo do Super Kiko">
             </div>
 
             <div class="input-box">
-                 <input placeholder="E-mail" type="email">
-                 <i class="bx bxs-user"></i>
+                <input placeholder="E-mail" type="email">
+                <i class="bx bxs-user"></i>
             </div>
 
             <div class="input-box">
-               <input placeholder="Senha" type="password">
-               <i class="bx bxs-lock-alt"></i>          
+                <input placeholder="Senha" type="password">
+                <i class="bx bxs-lock-alt"></i>
             </div>
 
-            <div class="remember-forgot"> 
+            <div class="remember-forgot">
                 <label>
-                  <input type="checkbox">
-                  Lembrar senha
+                    <input type="checkbox">
+                    Lembrar senha
                 </label>
                 <a href="#">Esqueci a senha</a>
             </div>
-            
+
             <button type="submit" class="Login">Entrar</button>
 
             <div class="register-link">
@@ -40,143 +40,6 @@
             </div>
 
         </form>
-    </div>
-</body>
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
- }
+    </main> </body>
 
- body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 130vh;
-    background-size: cover;
-    background-position:center;
-    background-color:#ffffff;
-    padding: 20px;
-
-}
-
- .logo {
-   width: 200px;
-   height: auto;
-   margin-bottom: 20px;
-   align-self: center;
-   
-}
-
-
- .container {
-    width: 100%;  
-    background-color: transparent;
-    border: 1px solid;
-    border-radius:10px;
-    color:#44678D;
-    padding: 30px 40px;
-    box-shadow: 0 0 10px #44678D;
-    max-width:400px;
-}
-
-
-.container h1 {
-    font-size: 36px;
-    text-align: center;
-    color:#44678D;
-    margin-bottom: 30px;
-    
- }
-
- .input-box{
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
-
- }
-
- .input-box input {
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border: 2px solid;
-    border-radius: 40px;
-    outline: none;
-    font-size: 16px;
-    color:#44678D;
-    padding: 20px 45px 20px 20px;
-
- }
-
- .input-box input::placeholder {
-    color:#44678D;
- }
-
- .input-box i {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
- }
-
- .remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    margin: -15px 0 15px;
- }
-
- .remember-forgot label input{
-    accent-color: #363636;
-    margin-right: 5px;
- }
-
-.remember-forgot a {
-    text-decoration: none;
-    color: #44678D;
-} 
-
-.remember-forgot a:hover {
-   text-decoration: underline;
-}
-
-.Login {
-   width: 100%;
-   height: 50px;
-   background-color:#F2E205;
-   border: none;
-   border-radius: 40px;
-   cursor: pointer;
-   font-size: 16px;
-   color: #44678D;
-   font-weight: 600;
-   box-shadow: 0 0 10;
-}
-
-.register-link {
-   font-size:  14px;
-   text-align: center;
-   margin: 20px 0 15px;
-}
-
-.register-link a {
-   text-decoration: none;
-   color:#44678D;
-   font-weight: 600;
-}
-
-.register-link a:hover {
-   text-decoration: underline;
-}
-
-
-</style>
-</head>
 </html>
-
-
-
