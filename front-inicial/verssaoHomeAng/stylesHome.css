@@ -1,0 +1,111 @@
+/* Importa o Bootstrap e os Ícones instalados via NPM */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+/* Seus estilos customizados do home.css original devem vir aqui */
+.navbar-custom {
+    background-color: #000025; /* Exemplo baseado no footer */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* --- Configurações Gerais --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+/* Compensação para o Navbar Fixo */
+body {
+  padding-top: 76px; /* Altura aproximada do navbar */
+}
+
+/* --- Navbar --- */
+.navbar-custom {
+  background-color: rgb(0, 17, 66);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-custom .nav-link {
+  color: #eeee08 !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover {
+  color: #faf9f9 !important;
+}
+
+/* --- Títulos das Seções --- */
+.section-title {
+  font-weight: 700;
+  color: #000025;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #eeee08;
+  display: inline-block;
+  margin-bottom: 30px;
+}
+
+/* --- Estilos dos Carrosséis --- */
+
+/* Banner Principal (Aniversário) */
+#carouselAniversario .carousel-item {
+  width: 250vh; /* Ocupa 80% da altura da tela */
+  background-color: #000; /* Fundo preto para preencher espaços se a imagem for estreita */
+}
+
+#carouselAniversario img {
+  width: 90%;
+  height: auto;
+  object-fit: cover; /* Preenche tudo (pode cortar bordas para focar no centro) */
+}
+
+/* Carrosséis de Produtos (Promoções e Hortifruti) */
+.product-carousel .carousel-item {
+  height: 500px; /* Altura fixa aceitável para produtos */
+  background-color: #f8f9fa; /* Fundo claro para destacar o produto */
+  text-align: center;
+}
+
+.product-carousel img {
+  width: auto; /* Largura automática para manter proporção */
+  max-width: 100%; /* Nunca excede a largura da tela */
+  height: 100%; /* Ocupa a altura disponível do container */
+  object-fit: contain; /* Garante que a imagem apareça INTEIRA, sem cortes */
+  padding: 20px; /* Espaço interno para não colar nas bordas */
+}
+
+/* Personalização dos botões do carrossel para ficarem visíveis no fundo branco */
+.product-carousel .carousel-control-prev-icon,
+.product-carousel .carousel-control-next-icon {
+  background-color: rgba(0, 17, 66, 0.5); /* Fundo escuro nas setas */
+  border-radius: 50%;
+  padding: 20px;
+}
+
+/* Responsividade para telas pequenas (Celular) */
+@media (max-width: 768px) {
+  #carouselAniversario .carousel-item {
+    height: 50vh; /* Banner menor no celular */
+  }
+  .product-carousel .carousel-item {
+    height: 350px; /* Produtos menores no celular */
+  }
+}
+
+/* --- Footer --- */
+.footer-link:hover {
+  color: #eeee08 !important;
+  text-decoration: underline !important;
+}
+
+.footer-social .social-icon {
+  transition: color 0.3s ease;
+}
+
+.footer-social .social-icon:hover {
+  color: #eeee08 !important;
+}

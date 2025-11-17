@@ -1,0 +1,53 @@
+<section id="carouselAniversario" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-inner">
+      <div class="carousel-item" *ngFor="let banner of banners; let i = index" [class.active]="i === 0">
+        <img [src]="banner.src" [alt]="banner.alt" class="d-block w-100">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselAniversario" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselAniversario" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Próximo</span>
+    </button>
+  </section>
+  
+  <section class="container my-5">
+    <h2 class="section-title text-center w-100">Promoções da Semana</h2>
+    <div id="carouselPromocoes" class="carousel slide product-carousel" data-bs-ride="carousel" data-bs-interval="2000">
+      <div class="carousel-inner">
+        <div class="carousel-item" *ngFor="let promo of promocoes; let i = index" [class.active]="i === 0">
+          <img [src]="promo.src" [alt]="promo.alt" class="d-block w-100"> 
+          </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselPromocoes" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselPromocoes" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+      </button>
+    </div>
+  </section>
+  
+  <section class="container my-5">
+    <h2 class="section-title text-center w-100">Especial Hortifrúti</h2>
+    <div id="carouselHortifruti" class="carousel slide product-carousel" data-bs-ride="carousel" data-bs-interval="2500">
+      <div class="carousel-inner">
+        <div class="carousel-item" *ngFor="let item of hortifruti; let i = index" [class.active]="i === 0">
+          <img [src]="item.src" [alt]="item.alt" class="d-block w-100">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselHortifruti" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselHortifruti" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+      </button>
+    </div>
+  </section>
