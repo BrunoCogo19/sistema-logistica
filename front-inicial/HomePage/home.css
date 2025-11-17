@@ -1,66 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* --- Configurações Gerais --- */
 html, body {
   margin: 0;
   padding: 0;
   font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  height: 100%;
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
 }
 
-.carousel,
-.carousel-item {
-  height: 90vh;
+/* Compensação para o Navbar Fixo */
+body {
+  padding-top: 76px; /* Altura aproximada do navbar */
 }
 
-.carousel-item {
-  background-size: cover;
-  background-position: center;
-}
-
-.carousel-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.carousel-fixed-caption {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 10;
-}
-
-.carousel-fixed-caption h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-}
-
-#carouselAniversario .carousel-item img {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-}
-
-#carouselPromocoes .carousel-item,
-#carouselHortifruti .carousel-item {
-  background-size: cover;
-  background-position: center;
-  height: 90vh;
-}
-
+/* --- Navbar --- */
 .navbar-custom {
   background-color: rgb(0, 17, 66);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .navbar-custom .nav-link {
@@ -73,6 +29,7 @@ html, body {
   color: #faf9f9 !important;
 }
 
+/* --- Títulos das Seções --- */
 .section-title {
   font-weight: 700;
   color: #000025;
@@ -80,8 +37,57 @@ html, body {
   padding-bottom: 10px;
   border-bottom: 3px solid #eeee08;
   display: inline-block;
+  margin-bottom: 30px;
 }
 
+/* --- Estilos dos Carrosséis --- */
+
+/* Banner Principal (Aniversário) */
+#carouselAniversario .carousel-item {
+  width: 250vh; /* Ocupa 80% da altura da tela */
+  background-color: #000; /* Fundo preto para preencher espaços se a imagem for estreita */
+}
+
+#carouselAniversario img {
+  width: 90%;
+  height: auto;
+  object-fit: cover; /* Preenche tudo (pode cortar bordas para focar no centro) */
+}
+
+/* Carrosséis de Produtos (Promoções e Hortifruti) */
+.product-carousel .carousel-item {
+  height: 500px; /* Altura fixa aceitável para produtos */
+  background-color: #f8f9fa; /* Fundo claro para destacar o produto */
+  text-align: center;
+}
+
+.product-carousel img {
+  width: auto; /* Largura automática para manter proporção */
+  max-width: 100%; /* Nunca excede a largura da tela */
+  height: 100%; /* Ocupa a altura disponível do container */
+  object-fit: contain; /* Garante que a imagem apareça INTEIRA, sem cortes */
+  padding: 20px; /* Espaço interno para não colar nas bordas */
+}
+
+/* Personalização dos botões do carrossel para ficarem visíveis no fundo branco */
+.product-carousel .carousel-control-prev-icon,
+.product-carousel .carousel-control-next-icon {
+  background-color: rgba(0, 17, 66, 0.5); /* Fundo escuro nas setas */
+  border-radius: 50%;
+  padding: 20px;
+}
+
+/* Responsividade para telas pequenas (Celular) */
+@media (max-width: 768px) {
+  #carouselAniversario .carousel-item {
+    height: 50vh; /* Banner menor no celular */
+  }
+  .product-carousel .carousel-item {
+    height: 350px; /* Produtos menores no celular */
+  }
+}
+
+/* --- Footer --- */
 .footer-link:hover {
   color: #eeee08 !important;
   text-decoration: underline !important;
